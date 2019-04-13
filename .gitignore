@@ -1,0 +1,12 @@
+build/*
+out/*
+lib/build
+lib/out
+lib/src/build
+lib/src/main/kotlin/telekt/bot/generator.kt
+examples/*/build
+examples/*/out
+examples/build
+*/build/*
+*/out/*
+classes/*
