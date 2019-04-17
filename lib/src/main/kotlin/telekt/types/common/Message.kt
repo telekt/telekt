@@ -19,6 +19,7 @@ import rocks.waffle.telekt.types.passport.PassportData
     @Optional @SerialName("forward_from_chat") val forwardFromChat: Chat? = null,
     @Optional @SerialName("forward_from_message_id") val forwardFromMessageId: Int? = null,
     @Optional @SerialName("forward_signature") val forwardSignature: String? = null,
+    @Optional @SerialName("forward_sender_name") val forwardSenderName: String? = null,
     @Optional @SerialName("forward_date") val forwardDate: Int? = null,
     @Optional @SerialName("reply_to_message") val replyToMessage: Message? = null,
     @Optional @SerialName("edit_date") val editDate: Int? = null,
@@ -40,6 +41,7 @@ import rocks.waffle.telekt.types.passport.PassportData
     @Optional val contact: Contact? = null,
     @Optional val location: Location? = null,
     @Optional val venue: Venue? = null,
+    @Optional val poll: Poll? = null,
     @Optional @SerialName("new_chat_members") val newChatMembers: Array<User>? = null,
     @Optional @SerialName("left_chat_member") val leftChatMember: User? = null,
     @Optional @SerialName("new_chat_title") val newChatTitle: String? = null,
@@ -56,7 +58,7 @@ import rocks.waffle.telekt.types.passport.PassportData
     @Optional @SerialName("connected_website") val connectedWebsite: String? = null,
     @Optional @SerialName("passport_data") val passportData: PassportData? = null
 ) : TextableTelegramEvent {
-    @Transient    val contentType: ContentType by lazy {
+    @Transient val contentType: ContentType by lazy {
         when {
             text != null -> ContentType.TEXT
             audio != null -> ContentType.AUDIO
@@ -84,10 +86,11 @@ import rocks.waffle.telekt.types.passport.PassportData
             deleteChatPhoto != null -> ContentType.DELETE_CHAT_PHOTO
             groupChatCreated != null -> ContentType.GROUP_CHAT_CREATED
             passportData != null -> ContentType.PASSPORT_DATA
+            poll != null -> ContentType.POLL
             else -> ContentType.UNKNOWN
         }
     }
 
-    @Transient    override val eventText: String?
+    @Transient override val eventText: String?
         get() = text ?: caption
 }

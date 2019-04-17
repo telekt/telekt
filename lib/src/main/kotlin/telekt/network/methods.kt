@@ -78,5 +78,9 @@ enum class TelegramMethod(val apiName: String) {
     // Games
     sendGame("sendGame"),
     setGameScore("setGameScore"),
-    getGameHighScores("getGameHighScores")
+    getGameHighScores("getGameHighScores"),
+
+    // Pools
+    sendPoll("sendPoll"),
+    stopPoll("stopPoll")
 }

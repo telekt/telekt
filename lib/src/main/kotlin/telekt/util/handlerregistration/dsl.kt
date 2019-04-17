@@ -3,6 +3,7 @@ package rocks.waffle.telekt.util.handlerregistration
 import rocks.waffle.telekt.dispatcher.Dispatcher
 import rocks.waffle.telekt.dispatcher.Filter
 import rocks.waffle.telekt.types.events.*
+import rocks.waffle.telekt.types.Poll
 
 @DslMarker
 @Target(AnnotationTarget.CLASS)
@@ -48,6 +49,9 @@ fun DispatchDSL.shippingQuerys(block: HandlerDSL<ShippingQueryEvent>.() -> Unit)
 
 fun DispatchDSL.preCheckoutQuerys(block: HandlerDSL<PreCheckoutQueryEvent>.() -> Unit): Unit =
     HandlerDSL(this.dp, Dispatcher::preCheckoutQueryHandler).run(block)
+
+fun DispatchDSL.polls(block: HandlerDSL<PollEvent>.() -> Unit): Unit =
+    HandlerDSL(this.dp, Dispatcher::pollHandler).run(block)
 
 
 fun HandlerDSL<MessageEvent>.handle(vararg filters: Filter<MessageEvent>, name: String? = null, block: suspend (MessageEvent) -> Unit) {
@@ -122,6 +126,15 @@ fun HandlerDSL<PreCheckoutQueryEvent>.handle(
     vararg filters: Filter<PreCheckoutQueryEvent>,
     name: String? = null,
     block: suspend (PreCheckoutQueryEvent) -> Unit
+) {
+    dp.registerHandler(filters, name, block)
+}
+
+@JvmName("pollHandle")
+fun HandlerDSL<PollEvent>.handle(
+    vararg filters: Filter<PollEvent>,
+    name: String? = null,
+    block: suspend (PollEvent) -> Unit
 ) {
     dp.registerHandler(filters, name, block)
 }

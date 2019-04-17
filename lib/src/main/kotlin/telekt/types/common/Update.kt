@@ -16,5 +16,6 @@ import rocks.waffle.telekt.types.events.TelegramEvent
     @Optional @SerialName("chosen_inline_result") val chosenInlineResult: ChosenInlineResult? = null,
     @Optional @SerialName("callback_query") val callbackQuery: CallbackQuery? = null,
     @Optional @SerialName("shipping_query") val shippingQuery: ShippingQuery? = null,
-    @Optional @SerialName("pre_checkout_query") val preCheckoutQuery: PreCheckoutQuery? = null
+    @Optional @SerialName("pre_checkout_query") val preCheckoutQuery: PreCheckoutQuery? = null,
+    @Optional val poll: Poll? = null
 ) : TelegramEvent

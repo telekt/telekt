@@ -5,10 +5,7 @@ import com.github.ajalt.clikt.parameters.arguments.argument
 import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.dispatcher.Dispatcher
 import rocks.waffle.telekt.util.answerOn
-import rocks.waffle.telekt.util.handlerregistration.command
-import rocks.waffle.telekt.util.handlerregistration.dispatch
-import rocks.waffle.telekt.util.handlerregistration.handle
-import rocks.waffle.telekt.util.handlerregistration.messages
+import rocks.waffle.telekt.util.handlerregistration.*
 
 
 suspend fun main(args: Array<String>) {

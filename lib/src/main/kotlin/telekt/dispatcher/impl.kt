@@ -37,6 +37,7 @@ class DispatcherImpl(
     private val callbackQueryHandlers: Handlers<CallbackQueryEvent> = Handlers()
     private val shippingQueryHandlers: Handlers<ShippingQueryEvent> = Handlers()
     private val preCheckoutQueryHandlers: Handlers<PreCheckoutQueryEvent> = Handlers()
+    private val pollHandlers: Handlers<PollEvent> = Handlers()
     //</editor-fold>
 
     //<editor-fold desc="handlers-registration">
@@ -102,6 +103,12 @@ class DispatcherImpl(
         block: suspend (PreCheckoutQueryEvent) -> Unit
     ): Unit =
         preCheckoutQueryHandlers.register(*filters, handler = block, name = name)
+
+    override fun pollHandler(
+        vararg filters: Filter<PollEvent>,
+        name: String?,
+        block: suspend (PollEvent) -> Unit): Unit =
+        pollHandlers.register(*filters, handler = block, name = name)
     //</editor-fold>
 
 
@@ -139,6 +146,7 @@ class DispatcherImpl(
                 callbackQuery != null -> callbackQueryHandlers.notify(CallbackQueryEvent(callbackQuery, bot, storage))
                 shippingQuery != null -> shippingQueryHandlers.notify(ShippingQueryEvent(shippingQuery, bot, storage))
                 preCheckoutQuery != null -> preCheckoutQueryHandlers.notify(PreCheckoutQueryEvent(preCheckoutQuery, bot, storage))
+                poll != null -> pollHandlers.notify(PollEvent(poll, bot, storage))
             }
         }
     }
@@ -147,7 +155,7 @@ class DispatcherImpl(
         coroutineScope {
             if (isPolling) throw RuntimeException("Polling already started")
 
-            logger.info("Start isPolling")
+            logger.info("Start polling")
 
             isPolling = true
             var offset: Int? = null
@@ -182,7 +190,7 @@ class DispatcherImpl(
     /** Break long-polling process. */
     override suspend fun stopPolling() {
         if (isPolling) {
-            logger.info("Stop isPolling...")
+            logger.info("Stop polling...")
             isPolling = false
         }
     }

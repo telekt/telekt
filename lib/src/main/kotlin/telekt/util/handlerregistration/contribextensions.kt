@@ -4,6 +4,7 @@ import rocks.waffle.telekt.contrib.filters.*
 import rocks.waffle.telekt.fsm.State
 import rocks.waffle.telekt.types.CallbackQuery
 import rocks.waffle.telekt.types.ChosenInlineResult
+import rocks.waffle.telekt.types.Poll
 import rocks.waffle.telekt.types.InlineQuery
 import rocks.waffle.telekt.types.Message
 import rocks.waffle.telekt.types.enums.ContentType
@@ -51,6 +52,8 @@ fun <E> @Suppress("unused") HandlerDSL<E>.contentTypes(
  * │    [CallbackQuery]    │ [CallbackQuery.data]                │
  * ├───────────────────────┼─────────────────────────────────────┤
  * │ [ChosenInlineResult]  │ [ChosenInlineResult.query]          │
+ * ├───────────────────────┼─────────────────────────────────────┤
+ * │        [Poll]         │ [Poll.question]                     │
  * └───────────────────────┴─────────────────────────────────────┘
  */
 fun <E> @Suppress("unused") HandlerDSL<E>.text(text: String?): TextFilter<E> where E : Event<out TextableTelegramEvent> =

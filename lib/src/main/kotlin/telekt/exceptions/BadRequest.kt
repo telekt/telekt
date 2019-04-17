@@ -48,6 +48,51 @@ class MessageIsTooLong(message: String) : MessageException(message)
 class ToMuchMessages(message: String) : MessageException(message)
 //</editor-fold>
 
+//<editor-fold desc="PollExceptions">
+open class PollException(message: String) : BadRequest(message)
+
+@ErrorTextBadRequest("message with poll to stop not found")
+/** Will be raised when you try to stop poll with message without poll */
+class MessageWithPollNotFound(message: String) : PollException(message)
+
+@ErrorTextBadRequest("message is not a poll")
+/** Will be raised when you try to stop poll with message without poll */
+class MessageIsNotAPoll(message: String) : PollException(message)
+
+@ErrorTextBadRequest("polls can't be sent to private chats")
+class PollsCantBeSentToPrivateChats(message: String) : PollException(message)
+
+
+//<editor-fold desc="PollSizeExceptions">
+open class PollSizeException(message: String) : BadRequest(message)
+
+@ErrorTextBadRequest("poll must have at least 2 option")
+class PollMustHaveMoreOptions(message: String) : PollSizeException(message)
+
+@ErrorTextBadRequest("poll can't have more than 10 options")
+class PollCantHaveMoreOptions(message: String) : PollSizeException(message)
+
+@ErrorTextBadRequest("poll options must be non-empty")
+class PollOptionsMustBeNonEmpty(message: String) : PollSizeException(message)
+
+@ErrorTextBadRequest("poll question must be non-empty")
+class PollQuestionMustBeNonEmpty(message: String) : PollSizeException(message)
+
+@ErrorTextBadRequest("poll options length must not exceed 100")
+class PollOptionsLengthTooLong(message: String) : PollSizeException(message)
+
+@ErrorTextBadRequest("poll question length must not exceed 255")
+class PollQuestionLengthTooLong(message: String) : PollSizeException(message)
+//</editor-fold>
+
+
+@ErrorTextBadRequest("poll can't be stopped")
+class PollCantBeStopped(message: String) : PollException(message)
+
+@ErrorTextBadRequest("poll has already been closed")
+class PollHasAlreadyBeenClosed(message: String) : PollException(message)
+//</editor-fold>
+
 @ErrorTextBadRequest("object expected as reply markup")
 class ObjectExpectedAsReplyMarkup(message: String) : BadRequest(message)
 
@@ -56,6 +101,9 @@ class InlineKeyboardExpected(message: String) : BadRequest(message)
 
 @ErrorTextBadRequest("chat not found")
 class ChatNotFound(message: String) : BadRequest(message)
+
+@ErrorTextBadRequest("user_id_invalid")
+class InvalidUserId(message: String) : BadRequest(message)
 
 @ErrorTextBadRequest("chat description is not modified")
 class ChatDescriptionIsNotModified(message: String) : BadRequest(message)
@@ -99,8 +147,14 @@ class NoStickerInRequest(message: String) : BadRequest(message)
 @ErrorTextBadRequest("CHAT_ADMIN_REQUIRED")
 class ChatAdminRequired(message: String) : BadRequest(message)
 
+@ErrorTextBadRequest("need administrator rights in the channel chat")
+class NeedAdministratorRightsInTheChannel(message: String) : BadRequest(message)
+
 @ErrorTextBadRequest("not enough rights to pin a message")
 class NotEnoughRightsToPinMessage(message: String) : BadRequest(message)
+
+@ErrorTextBadRequest("method is available only for supergroups and channel")
+class MethodNotAvailableInPrivateChats(message: String) : BadRequest(message)
 
 @ErrorTextBadRequest("can't demote chat creator")
 class CantDemoteChatCreator(message: String) : BadRequest(message)
@@ -137,13 +191,16 @@ class BadWebhookPort(message: String) : BadWebhook(message)
 
 @ErrorTextBadRequest("getaddrinfo: Temporary failure in name resolution")
 class BadWebhookAddrInfo(message: String) : BadWebhook(message)
-//</editor-fold>
 
-@ErrorTextBadRequest("can't parse URL")
-class CantParseUrl(message: String) : BadRequest(message)
+@ErrorTextBadRequest("failed to resolve host: no address associated with hostname")
+class BadWebhookNoAddressAssociatedWithHostname(message: String) : BadWebhook(message)
+//</editor-fold>
 
 @ErrorTextBadRequest("can't parse entities")
 class CantParseEntities(message: String) : BadRequest(message)
+
+@ErrorTextBadRequest("result_id_duplicate")
+class ResultIdDuplicate(message: String) : BadRequest(message)
 
 @ErrorTextBadRequest("unsupported URL protocol")
 class UnsupportedURLProtocol(message: String) : BadRequest(message)

@@ -670,10 +670,29 @@ class BotImpl(
             SetPassportDataErrors(userId, errors)
         )
     //</editor-fold>
+
+    //<editor-fold desc="polls">
+    override suspend fun sendPoll(chatId: Recipient, question: String, options: List<String>, disableNotification: Boolean?, replyToMessageId: Int?, replyMarkup: ReplyMarkup?): Message =
+        api.makeRequest(
+            token,
+            SendPoll(chatId, question, options, disableNotification, replyToMessageId, replyMarkup)
+        )
+
+    override suspend fun stopPoll(chatId: Recipient, messageId: Int, replyMarkup: InlineKeyboardMarkup?): Poll =
+        api.makeRequest(
+            token,
+            StopPoll(chatId, messageId, replyMarkup)
+        )
+    //</editor-fold>
+
     //</editor-fold>
 
     override suspend fun close() {
-        cancel()
+        cancelScope()
         api.close()
+    }
+
+    private fun cancelScope() {
+        cancel()
     }
 }

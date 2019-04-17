@@ -4,11 +4,12 @@ import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.fsm.BaseStorage
 import rocks.waffle.telekt.fsm.FSMContext
 import rocks.waffle.telekt.types.*
+import rocks.waffle.telekt.types.Poll
 
 interface TelegramEvent
 
 /**
- * Event came from telegram, like [telekt.types.Message], [telekt.types.CallbackQuery] and so on with additional info.
+ * Event came from telegram, like [rocks.waffle.telekt.types.Message], [rocks.waffle.telekt.types.CallbackQuery] and so on with additional info.
  *
  * @param update the update (from telegram) himself
  * @param bot the bot on which token update came
@@ -89,6 +90,10 @@ inline val ShippingQueryEvent.shippingQuery get() = update
 class PreCheckoutQueryEvent(preCheckoutQuery: PreCheckoutQuery, bot: Bot, storage: BaseStorage) :
     Event<PreCheckoutQuery>(preCheckoutQuery, bot, storage, {
         FSMInfo(from.id, from.id) // PM
+    })
+
+class PollEvent(poll: Poll, bot: Bot, storage: BaseStorage) : Event<Poll>(poll, bot, storage, {
+        throw NotImplementedError("PollEvent dont implement FSM info")
     })
 
 inline val PreCheckoutQueryEvent.preCheckoutQuery get() = update

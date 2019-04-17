@@ -27,6 +27,7 @@ enum class ContentType {
     DELETE_CHAT_PHOTO, // delete_chat_photo
     GROUP_CHAT_CREATED, // group_chat_created
     PASSPORT_DATA, // passport_data
+    POLL, // poll
 
-    UNKNOWN, // unknown
+    UNKNOWN // unknown
 }

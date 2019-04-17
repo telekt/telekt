@@ -41,7 +41,7 @@ abstract class Detector<T> {
     fun detect(description: String) = detect(description, exceptions as List<Pair<KFunction<TelegramAPIException>, String>>)
 }
 
-val PREFIXES = arrayOf("Error: ", "[Error]: ", "Bad Request: ", "Conflict: ", "Not Found: ")
+val PREFIXES = arrayOf("error: ", "[error]: ", "bad request: ", "conflict: ", "not found: ")
 
 /**
  * Remove `PREFIXES`, trim and capitalize message

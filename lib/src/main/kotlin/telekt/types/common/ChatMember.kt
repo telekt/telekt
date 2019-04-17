@@ -18,6 +18,7 @@ import kotlinx.serialization.Serializable
     @Optional @SerialName("can_restrict_members") val canRestrictMembers: Boolean? = null,
     @Optional @SerialName("can_pin_messages") val canPinMessages: Boolean? = null,
     @Optional @SerialName("can_promote_members") val canPromoteMembers: Boolean? = null,
+    @Optional @SerialName("is_member") val isMember: Boolean? = null,
     @Optional @SerialName("can_send_messages") val canSendMessages: Boolean? = null,
     @Optional @SerialName("can_send_media_messages") val canSendMediaMessages: Boolean? = null,
     @Optional @SerialName("can_send_other_messages") val canSendOtherMessages: Boolean? = null,

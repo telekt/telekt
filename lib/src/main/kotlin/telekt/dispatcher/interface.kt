@@ -4,6 +4,7 @@ import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.fsm.BaseStorage
 import rocks.waffle.telekt.types.Update
 import rocks.waffle.telekt.types.events.*
+import rocks.waffle.telekt.types.Poll
 
 
 @Suppress("FunctionName")
@@ -47,7 +48,7 @@ interface Dispatcher {
     /**
      * Break long-polling process.
      *
-     * @throws telekt.exceptions.PollingWasAlreadyStopped if polling was already stopped
+     * @throws rocks.waffle.telekt.exceptions.PollingWasAlreadyStopped if polling was already stopped
      */
     suspend fun stopPolling(): Unit
     //</editor-fold>
@@ -101,6 +102,12 @@ interface Dispatcher {
         vararg filters: Filter<PreCheckoutQueryEvent>,
         name: String? = null,
         block: suspend (PreCheckoutQueryEvent) -> Unit
+    ): Unit
+
+    fun pollHandler(
+        vararg filters: Filter<PollEvent>,
+        name: String? = null,
+        block: suspend (PollEvent) -> Unit
     ): Unit
     //</editor-fold>
 
