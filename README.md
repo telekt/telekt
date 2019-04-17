@@ -63,8 +63,8 @@ TeleKt splits **calling tg api methods** and **dispatching incoming updates**.
 Create a file called `echobot.kt`.
 Then, open the file and create an instance of the `Bot` and `Dispatcher` classes.
 ```kotlin
-import telekt.bot.*
-import telekt.dispatcher.*
+import rocks.waffle.telekt.bot.*
+import rocks.waffle.telekt.dispatcher.*
 
 fun main() {
     val bot = Bot("TOKEN")
@@ -98,10 +98,10 @@ dp.poll()
 
 Alright, that's it! Our source file now looks like this:
 ```kotlin
-import telekt.bot.*
-import telekt.dispatcher.*
-import telekt.types.events.MessageEvent
-import telekt.contrib.filters.CommandFilter
+import rocks.waffle.telekt.bot.*
+import rocks.waffle.telekt.dispatcher.*
+import rocks.waffle.telekt.types.events.MessageEvent
+import rocks.waffle.telekt.contrib.filters.CommandFilter
 
 
 suspend fun main() {
@@ -135,7 +135,7 @@ The Message class also has a `contentType` attribute, which defines the type of 
 
 ### Methods
 
-All [API methods](https://core.telegram.org/bots/api#available-methods) are located in the [Bot](lib/src/main/kotlin/telekt/bot/bot.kt) class. 
+All [API methods](https://core.telegram.org/bots/api#available-methods) are located in the [Bot](lib/src/main/kotlin/rocks.waffle.telekt/bot/bot.kt) class. 
 
 ### General use of the API
 
@@ -203,7 +203,7 @@ Refer [Bot Api](https://core.telegram.org/bots/api#messageentity) for extra deta
 ### Sending large text messages
 Sometimes you must send messages that exceed 5000 characters. The Telegram API can not handle that many characters in one request, so we need to split the message in multiples. Here is how to do that using the API:
 ```kotlin
-import telekt.util.splitByLenght
+import rocks.waffle.telekt.util.splitByLenght
 
 val largeText = "Really large text here"
 

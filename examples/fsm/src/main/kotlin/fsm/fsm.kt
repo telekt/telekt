@@ -1,15 +1,15 @@
-package telekt.examples.fsm
+package rocks.waffle.telekt.examples.fsm
 
 
-import telekt.contrib.storages.ActorMemoryStorage
-import telekt.dispatcher.Dispatcher
-import telekt.fsm.next
-import telekt.types.KeyboardButton
-import telekt.types.ReplyKeyboardMarkup
-import telekt.types.ReplyKeyboardRemove
-import telekt.types.enums.ParseMode
-import telekt.util.handlerregistration.*
-import telekt.util.markdown.html
+import rocks.waffle.telekt.contrib.storages.ActorMemoryStorage
+import rocks.waffle.telekt.dispatcher.Dispatcher
+import rocks.waffle.telekt.fsm.next
+import rocks.waffle.telekt.types.KeyboardButton
+import rocks.waffle.telekt.types.ReplyKeyboardMarkup
+import rocks.waffle.telekt.types.ReplyKeyboardRemove
+import rocks.waffle.telekt.types.enums.ParseMode
+import rocks.waffle.telekt.util.handlerregistration.*
+import rocks.waffle.telekt.util.markdown.html
 
 
 suspend fun main(args: Array<String>) {

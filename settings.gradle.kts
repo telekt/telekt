@@ -1,7 +1,7 @@
-rootProject.name = "telekt"
+rootProject.name = "rocks.waffle.telekt"
 
 /*
- * telekt
+ * rocks.waffle.telekt
  * │
  * ├─ lib       // TeleKt lib itself
  * │

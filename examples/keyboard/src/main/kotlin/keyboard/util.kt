@@ -1,4 +1,4 @@
-package telekt.examples.keyboard
+package rocks.waffle.telekt.examples.keyboard
 
 import com.github.ajalt.clikt.core.NoRunCliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument

@@ -1,4 +1,4 @@
-package telekt.examples.fsm
+package rocks.waffle.telekt.examples.fsm
 
 enum class Gender { MALE, FEMALE, OTHER, PARSE_ERROR }
 

@@ -1,10 +1,10 @@
 // examples/echobot/build.gradle.kts
-group = "telekt.examples.dslechobot"
+group = "rocks.waffle.telekt.examples.dslechobot"
 version = "0.1.0"
 
 plugins { application }
 
-application { mainClassName = "telekt.examples.dslechobot.EchobotKt" }
+application { mainClassName = "rocks.waffle.telekt.examples.dslechobot.EchobotKt" }
 
 repositories { maven("https://kotlin.bintray.com/kotlinx") }
 

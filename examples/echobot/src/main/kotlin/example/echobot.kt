@@ -1,13 +1,13 @@
-package telekt.examples.echobot
+package rocks.waffle.telekt.examples.echobot
 
 import com.github.ajalt.clikt.core.NoRunCliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
-import telekt.bot.Bot
-import telekt.contrib.filters.CommandFilter
-import telekt.dispatcher.Dispatcher
-import telekt.types.events.MessageEvent
-import telekt.types.events.message
-import telekt.util.answerOn
+import rocks.waffle.telekt.bot.Bot
+import rocks.waffle.telekt.contrib.filters.CommandFilter
+import rocks.waffle.telekt.dispatcher.Dispatcher
+import rocks.waffle.telekt.types.events.MessageEvent
+import rocks.waffle.telekt.types.events.message
+import rocks.waffle.telekt.util.answerOn
 
 
 suspend fun main(args: Array<String>) {

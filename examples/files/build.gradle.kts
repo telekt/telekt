@@ -1,9 +1,9 @@
-group = "telekt.examples.markdown"
+group = "rocks.waffle.telekt.examples.markdown"
 version = "0.1.0"
 
 plugins { application }
 
-application { mainClassName = "telekt.examples.files.FilesKt" }
+application { mainClassName = "rocks.waffle.telekt.examples.files.FilesKt" }
 
 repositories { maven("https://kotlin.bintray.com/kotlinx") }
 

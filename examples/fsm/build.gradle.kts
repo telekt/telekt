@@ -1,9 +1,9 @@
-group = "telekt.examples.fsm"
+group = "rocks.waffle.telekt.examples.fsm"
 version = "0.1.0"
 
 plugins { application }
 
-application { mainClassName = "telekt.examples.fsm.FsmKt" }
+application { mainClassName = "rocks.waffle.telekt.examples.fsm.FsmKt" }
 
 repositories { maven("https://kotlin.bintray.com/kotlinx") }
 

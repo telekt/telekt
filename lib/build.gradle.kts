@@ -1,4 +1,4 @@
-group = "telekt"
+group = "rocks.waffle.telekt"
 version = "0.0.1"
 
 val kotlinVersion = "1.3.21"

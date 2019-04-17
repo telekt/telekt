@@ -1,9 +1,9 @@
-group = "telekt.examples.keyboard"
+group = "rocks.waffle.telekt.examples.keyboard"
 version = "0.1.0"
 
 plugins { application }
 
-application { mainClassName = "telekt.examples.keyboard.KeyboardKt" }
+application { mainClassName = "rocks.waffle.telekt.examples.keyboard.KeyboardKt" }
 
 repositories { maven("https://kotlin.bintray.com/kotlinx") }
 
