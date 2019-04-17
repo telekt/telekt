@@ -23,7 +23,7 @@ Table of content:
     * [Using web hooks](#using-web-hooks)
     * [Logging](#logging)
   * [The Telegram Chat Group](#the-telegram-chat-groups-and-channel)
-  * [More examples](#more-examples)
+  * [Examples](#Examples)
   * [Bots using this API](#bots-using-this-api)
   * [Wrapping Notes](#wrapping-notes)
   * [TODO](#todo)
@@ -185,11 +185,6 @@ bot.me.await()
 All `send<Something>` functions of [Bot](lib/src/main/kotlin/telekt/bot/bot.kt) take an optional `replyMarkup` argument.  
 This argument must be an instance of `ReplyKeyboardMarkup`, `InlineKeyboardMarkup`, `ReplyKeyboardRemove` or `ForceReply`, which are defined in [markup.kt](lib/src/main/kotlin/telekt/types/replymarkup/markup.kt).
 
-**examples**:
-- [ReplyKeyboardMurkup](examples/keyboard)
- 
-// TODO: add there good examples
-
 ### Inline Mode
 
 More information about [Inline mode](https://core.telegram.org/bots/inline).
@@ -235,10 +230,15 @@ Get help. Discuss. Chat.
 * Or join [Russian TeleKt Chat Group](https://t.me/telektru)
 * Also join our [News Channel](https://t.me/telektnews)
 
-## More examples
+## Examples
 
 All examples are located in [examples](examples) directory
 * [Echo bot](examples/echobot)
+* [Dsl echo bot](examples/dslechobot)
+* [Files](examples/files)
+* [FSM](examples/fsm)
+* [Inline buttons](examples/inlineButtons)
+* [Keyboard](examples/keyboard)
 * [Markdown](examples/markdown)
 
 ## Bots using this API
