@@ -1,4 +1,4 @@
-group = "rocks.waffle.telekt.examples.dslechobot"
+group = "rocks.waffle.telekt.examples.inlineButtons"
 version = "0.1.0"
 
 plugins { application }

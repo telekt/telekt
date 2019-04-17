@@ -1,4 +1,4 @@
-group = "rocks.waffle.telekt.examples.markdown"
+group = "rocks.waffle.telekt.examples.files"
 version = "0.1.0"
 
 plugins { application }
