@@ -1,4 +1,3 @@
-// examples/echobot/build.gradle.kts
 group = "rocks.waffle.telekt.examples.echobot"
 version = "0.1.1"
 
