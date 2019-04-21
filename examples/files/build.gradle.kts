@@ -15,7 +15,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
     // telekt itself
-    implementation(project(":lib"))
+    implementation(project(":telekt"))
 
     // for parsing command line args
     implementation("com.github.ajalt:clikt:1.6.0")

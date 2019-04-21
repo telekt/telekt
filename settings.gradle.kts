@@ -3,7 +3,7 @@ rootProject.name = "rocks.waffle.telekt"
 /*
  * rocks.waffle.telekt
  * │
- * ├─ lib       // TeleKt lib itself
+ * ├─ telekt    // TeleKt lib itself
  * │
  * └─ examples  // lib usage examples
  *    │
@@ -22,7 +22,7 @@ rootProject.name = "rocks.waffle.telekt"
  *    └─ files          // downloading and uploading files to/from telegram
  */
 include (
-        ":lib",
+        ":telekt",
         ":examples:echobot",
         ":examples:dslechobot",
         ":examples:markdown",
