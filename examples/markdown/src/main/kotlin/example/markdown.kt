@@ -1,18 +1,18 @@
-package telekt.examples.markdown
+package rocks.waffle.telekt.examples.markdown
 
 // NOTE: in this file 'Markdown' stands for parse mode Markdown, and 'markdown' stands for parse mode (Markdown|html)
 
 import com.github.ajalt.clikt.core.NoRunCliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
-import telekt.bot.Bot
-import telekt.contrib.filters.CommandFilter
-import telekt.dispatcher.Dispatcher
-import telekt.types.Message
-import telekt.types.enums.ParseMode
-import telekt.util.Recipient
-import telekt.util.markdown.html
-import telekt.util.markdown.htmlText
-import telekt.util.markdown.markdown
+import rocks.waffle.telekt.bot.Bot
+import rocks.waffle.telekt.contrib.filters.CommandFilter
+import rocks.waffle.telekt.dispatcher.Dispatcher
+import rocks.waffle.telekt.types.Message
+import rocks.waffle.telekt.types.enums.ParseMode
+import rocks.waffle.telekt.util.Recipient
+import rocks.waffle.telekt.util.markdown.html
+import rocks.waffle.telekt.util.markdown.htmlText
+import rocks.waffle.telekt.util.markdown.markdown
 
 
 class Args : NoRunCliktCommand() {

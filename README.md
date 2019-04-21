@@ -23,7 +23,7 @@ Table of content:
     * [Using web hooks](#using-web-hooks)
     * [Logging](#logging)
   * [The Telegram Chat Group](#the-telegram-chat-groups-and-channel)
-  * [More examples](#more-examples)
+  * [Examples](#Examples)
   * [Bots using this API](#bots-using-this-api)
   * [Wrapping Notes](#wrapping-notes)
   * [TODO](#todo)
@@ -35,7 +35,7 @@ Install to your project:
 
 * Using Gradle.kts:
 ```kotlin
-implementation("...")
+implementation("rocks.waffle.telekt:telekt:0.1.0")
 ```
 Also this project uses [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization), so you need to add kotlinx repository: 
 ```kotlin
@@ -57,14 +57,14 @@ Furthermore, you have basic knowledge of the Kotlin programming language and mor
 
 TeleKt splits **calling tg api methods** and **dispatching incoming updates**.    
 
-* For first feature there is class [Bot](lib/src/main/kotlin/telekt/bot/bot.kt) that encapsulates all API calls in a single class.  
-* For second — class [Dispatcher](lib/src/main/kotlin/telekt/dispatcher/dispatcher.kt) provide several ways to listen for incoming updates (e.g. messages). 
+* For first feature there is class [Bot](telekt/src/main/kotlin/telekt/bot/bot.kt) that encapsulates all API calls in a single class.  
+* For second — class [Dispatcher](telekt/src/main/kotlin/telekt/dispatcher/dispatcher.kt) provide several ways to listen for incoming updates (e.g. messages). 
 
 Create a file called `echobot.kt`.
 Then, open the file and create an instance of the `Bot` and `Dispatcher` classes.
 ```kotlin
-import telekt.bot.*
-import telekt.dispatcher.*
+import rocks.waffle.telekt.bot.*
+import rocks.waffle.telekt.dispatcher.*
 
 fun main() {
     val bot = Bot("TOKEN")
@@ -98,10 +98,10 @@ dp.poll()
 
 Alright, that's it! Our source file now looks like this:
 ```kotlin
-import telekt.bot.*
-import telekt.dispatcher.*
-import telekt.types.events.MessageEvent
-import telekt.contrib.filters.CommandFilter
+import rocks.waffle.telekt.bot.*
+import rocks.waffle.telekt.dispatcher.*
+import rocks.waffle.telekt.types.events.MessageEvent
+import rocks.waffle.telekt.contrib.filters.CommandFilter
 
 
 suspend fun main() {
@@ -128,21 +128,21 @@ Full example you can see at [there](examples/echobot)
 
 ### Types
 
-All types are defined in [telekt.types](lib/src/main/kotlin/telekt/types) package.  
+All types are defined in [telekt.types](telekt/src/main/kotlin/telekt/types) package.  
 They are all completely in line with the [Telegram API's definition of the types](https://core.telegram.org/bots/api#available-types), except that all field renamed from `snake_case` to `camelCase` (like `message.message_id` => `message.messageId`). Thus, attributes such as `messageId` can be accessed directly with `message.messageId`. 
 
 The Message class also has a `contentType` attribute, which defines the type of the Message. 
 
 ### Methods
 
-All [API methods](https://core.telegram.org/bots/api#available-methods) are located in the [Bot](lib/src/main/kotlin/telekt/bot/bot.kt) class. 
+All [API methods](https://core.telegram.org/bots/api#available-methods) are located in the [Bot](telekt/src/main/kotlin/rocks.waffle.telekt/bot/bot.kt) class. 
 
 ### General use of the API
 
 Outlined below are some general use cases of the API.
 
 #### Message handlers
-A message handler is a function that is given to `messageHandler` function of a [Dispatcher](lib/src/main/kotlin/telekt/dispatcher/dispatcher.kt) instance.  
+A message handler is a function that is given to `messageHandler` function of a [Dispatcher](telekt/src/main/kotlin/telekt/dispatcher/dispatcher.kt) instance.  
 Message handlers consist of 0, one or multiple filters.
 Each filter's `test(...)` function must return `True` for a certain message in order for a message handler to become eligible to handle that message. A message handler is declared in the following way:
 ```kotlin
@@ -153,7 +153,7 @@ fun functionName(message: MessageEvent) { /* ... */ }
 dp.messageHandler(*filters, block = ::functionName)
 ```
 `functionName` is not bound to any restrictions. Any function name is permitted with message handlers. The function must accept at most one argument, which will be the message event that the function must handle.
-`filters` is a vararg array of [Filter](lib/src/main/kotlin/telekt/dispatcher/handler.kt)s.
+`filters` is a vararg array of [Filter](telekt/src/main/kotlin/telekt/dispatcher/handler.kt)s.
 One handler may have multiple filters.
 
 There is also `DSL`-like builder for registration handlers:
@@ -177,18 +177,13 @@ All other handlers (callbackQuery, editedMessage, etc) work the same way.
 
 
 #### Bot.me
-[Bot](lib/src/main/kotlin/telekt/bot/bot.kt).me is lazy started coroutine builded with `async{}` builder that just calls `bot.getMe()`. Only bot creator can change bot user (via [BotFather](https://t.me/BotFather)) so in most cases it's safe to use it.
+[Bot](telekt/src/main/kotlin/telekt/bot/bot.kt).me is lazy started coroutine builded with `async{}` builder that just calls `bot.getMe()`. Only bot creator can change bot user (via [BotFather](https://t.me/BotFather)) so in most cases it's safe to use it.
 ```kotlin
 bot.me.await()
 ```
 #### Reply markup
-All `send<Something>` functions of [Bot](lib/src/main/kotlin/telekt/bot/bot.kt) take an optional `replyMarkup` argument.  
-This argument must be an instance of `ReplyKeyboardMarkup`, `InlineKeyboardMarkup`, `ReplyKeyboardRemove` or `ForceReply`, which are defined in [markup.kt](lib/src/main/kotlin/telekt/types/replymarkup/markup.kt).
-
-**examples**:
-- [ReplyKeyboardMurkup](examples/keyboard)
- 
-// TODO: add there good examples
+All `send<Something>` functions of [Bot](telekt/src/main/kotlin/telekt/bot/bot.kt) take an optional `replyMarkup` argument.  
+This argument must be an instance of `ReplyKeyboardMarkup`, `InlineKeyboardMarkup`, `ReplyKeyboardRemove` or `ForceReply`, which are defined in [markup.kt](telekt/src/main/kotlin/telekt/types/replymarkup/markup.kt).
 
 ### Inline Mode
 
@@ -203,7 +198,7 @@ Refer [Bot Api](https://core.telegram.org/bots/api#messageentity) for extra deta
 ### Sending large text messages
 Sometimes you must send messages that exceed 5000 characters. The Telegram API can not handle that many characters in one request, so we need to split the message in multiples. Here is how to do that using the API:
 ```kotlin
-import telekt.util.splitByLenght
+import rocks.waffle.telekt.util.splitByLenght
 
 val largeText = "Really large text here"
 
@@ -235,10 +230,15 @@ Get help. Discuss. Chat.
 * Or join [Russian TeleKt Chat Group](https://t.me/telektru)
 * Also join our [News Channel](https://t.me/telektnews)
 
-## More examples
+## Examples
 
 All examples are located in [examples](examples) directory
 * [Echo bot](examples/echobot)
+* [Dsl echo bot](examples/dslechobot)
+* [Files](examples/files)
+* [FSM](examples/fsm)
+* [Inline buttons](examples/inlineButtons)
+* [Keyboard](examples/keyboard)
 * [Markdown](examples/markdown)
 
 ## Bots using this API
@@ -252,11 +252,11 @@ Note some things about tg bot api wrapping:
 
 1. All methods that return `True` in tg bot api (like [unbanChatMember](https://core.telegram.org/bots/api#unbanchatmember)), in TeleKt return `Unit`
 2. All [`edit*`](https://core.telegram.org/bots/api#updating-messages) methods splited in 2 overloads:
-   1. For messages sent by the bot (return [`Message`](lib/src/main/kotlin/telekt/types/common/Message.kt))
+   1. For messages sent by the bot (return [`Message`](telekt/src/main/kotlin/telekt/types/common/Message.kt))
    2. For inline messages (return `Unit`)
 3. All names have been changed to match with coding conventions
 4. Some methods that accept const strings in tg bot api (like [sendChatAction](https://core.telegram.org/bots/api#sendchataction)), in TeleKt accept enums
-5. All `chatId` params is of type [`Recipient`](lib/src/main/kotlin/telekt/util/Recipient.kt) cause Kotlin haven't algebraic types.
+5. All `chatId` params is of type [`Recipient`](telekt/src/main/kotlin/telekt/util/Recipient.kt) cause Kotlin haven't algebraic types.
 
 ## TODO
 

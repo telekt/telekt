@@ -1,22 +1,22 @@
-package telekt.examples.files
+package rocks.waffle.telekt.examples.files
 
 
 import com.github.ajalt.clikt.core.NoRunCliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
-import telekt.bot.Bot
-import telekt.bot.downloadFileByFileId
-import telekt.contrib.filters.ContentTypeFilter
-import telekt.dispatcher.Dispatcher
-import telekt.network.FileUrl
-import telekt.network.InputFile
-import telekt.types.Message
-import telekt.types.enums.ContentType
-import telekt.types.enums.ParseMode
-import telekt.types.events.Event
-import telekt.util.Recipient
-import telekt.util.handlerregistration.*
-import telekt.util.markdown.hcode
-import telekt.util.markdown.hlink
+import rocks.waffle.telekt.bot.Bot
+import rocks.waffle.telekt.bot.downloadFileByFileId
+import rocks.waffle.telekt.contrib.filters.ContentTypeFilter
+import rocks.waffle.telekt.dispatcher.Dispatcher
+import rocks.waffle.telekt.network.FileUrl
+import rocks.waffle.telekt.network.InputFile
+import rocks.waffle.telekt.types.Message
+import rocks.waffle.telekt.types.enums.ContentType
+import rocks.waffle.telekt.types.enums.ParseMode
+import rocks.waffle.telekt.types.events.Event
+import rocks.waffle.telekt.util.Recipient
+import rocks.waffle.telekt.util.handlerregistration.*
+import rocks.waffle.telekt.util.markdown.hcode
+import rocks.waffle.telekt.util.markdown.hlink
 import java.io.File
 
 

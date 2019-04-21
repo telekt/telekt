@@ -1,14 +1,11 @@
-package telekt.examples.dslechobot
+package rocks.waffle.telekt.examples.dslechobot
 
 import com.github.ajalt.clikt.core.NoRunCliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
-import telekt.bot.Bot
-import telekt.dispatcher.Dispatcher
-import telekt.util.answerOn
-import telekt.util.handlerregistration.command
-import telekt.util.handlerregistration.dispatch
-import telekt.util.handlerregistration.handle
-import telekt.util.handlerregistration.messages
+import rocks.waffle.telekt.bot.Bot
+import rocks.waffle.telekt.dispatcher.Dispatcher
+import rocks.waffle.telekt.util.answerOn
+import rocks.waffle.telekt.util.handlerregistration.*
 
 
 suspend fun main(args: Array<String>) {

@@ -1,9 +1,9 @@
-group = "telekt.examples.markdown"
+group = "rocks.waffle.telekt.examples.markdown"
 version = "0.1.0"
 
 plugins { application }
 
-application { mainClassName = "telekt.examples.markdown.MarkdownKt" }
+application { mainClassName = "rocks.waffle.telekt.examples.markdown.MarkdownKt" }
 
 repositories { maven("https://kotlin.bintray.com/kotlinx") }
 
@@ -15,7 +15,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
     // telekt itself
-    implementation(project(":lib"))
+    implementation(project(":telekt"))
 
     // for parsing command line args
     implementation("com.github.ajalt:clikt:1.6.0")
