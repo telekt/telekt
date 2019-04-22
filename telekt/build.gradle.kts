@@ -1,5 +1,5 @@
 group = "rocks.waffle.telekt"
-version = "0.1.1-dev"
+version = "0.1.2-SNAPSHOT"
 
 val kotlinVersion = "1.3.21"
 val ktorVersion = "1.1.3"
@@ -121,7 +121,7 @@ publishing {
 
             val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2")
             val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-            url = if (version.toString().endsWith("dev")) {
+            url = if (version.toString().endsWith("SNAPSHOT")) {
                 println("snapshot")
                 snapshotsRepoUrl
             } else releasesRepoUrl
