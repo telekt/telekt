@@ -19,7 +19,7 @@ import rocks.waffle.telekt.util.Recipient
     /** Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername) */
     @SerialName("from_chat_id") val fromChatId: Recipient,
     /** Sends the message silently. Users will receive a notification with no sound. */
-    @Optional @SerialName("disable_notification") val disableNotification: Boolean? = null,
+    @SerialName("disable_notification") val disableNotification: Boolean? = null,
     /** Message identifier in the chat specified in from_chat_id */
     @SerialName("message_id") val messageId: Int
 ) : SimpleRequest<Message>() {

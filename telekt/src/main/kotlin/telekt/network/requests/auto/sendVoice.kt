@@ -25,17 +25,17 @@ import rocks.waffle.telekt.util.Recipient
     /** Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files » */
     val voice: InputFile,
     /** Voice message caption, 0-1024 characters */
-    @Optional val caption: String? = null,
+    val caption: String? = null,
     /** Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption. */
-    @SerialName("parse_mode") @Optional val parseMode: ParseMode? = null,
+    @SerialName("parse_mode") val parseMode: ParseMode? = null,
     /** Duration of the voice message in seconds */
-    @Optional val duration: Int? = null,
+    val duration: Int? = null,
     /** Sends the message silently. Users will receive a notification with no sound. */
-    @SerialName("disable_notification") @Optional val disableNotification: Boolean? = null,
+    @SerialName("disable_notification") val disableNotification: Boolean? = null,
     /** If the message is a reply, ID of the original message */
-    @SerialName("reply_to_message_id") @Optional val replyToMessageId: Int? = null,
+    @SerialName("reply_to_message_id") val replyToMessageId: Int? = null,
     /** Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user. */
-    @SerialName("reply_markup") @Optional val replyMarkup: ReplyMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : MultipartRequest<Message>() {
     @Transient override val method = TelegramMethod.sendVoice
     @Transient override val mediaMap: Map<String, MultipartFile> = mapOf("voice" to voice).asMediaMap()

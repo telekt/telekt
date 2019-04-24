@@ -26,8 +26,8 @@ import kotlinx.serialization.*
 @Serializable data class InputContactMessageContent(
     @SerialName("phone_number") val phoneNumber: String,
     @SerialName("first_name") val firstName: String,
-    @Optional @SerialName("last_name") val lastName: String? = null,
-    @Optional val vcard: String? = null
+    @SerialName("last_name") val lastName: String? = null,
+    val vcard: String? = null
 ) : InputMessageContent()
 
 
@@ -35,15 +35,15 @@ import kotlinx.serialization.*
 @Serializable data class InputLocationMessageContent(
     val latitude: Float,
     val longitude: Float,
-    @Optional @SerialName("live_period") val livePeriod: Int? = null
+    @SerialName("live_period") val livePeriod: Int? = null
 ) : InputMessageContent()
 
 
 /** Represents the content of a text message to be sent as the result of an inline query. */
 @Serializable data class InputTextMessageContent(
     @SerialName("message_text") val messageText: String,
-    @Optional @SerialName("parse_mode") val parseMode: String? = null,
-    @Optional @SerialName("disable_web_page_preview") val disableWebPagePreview: Boolean? = null
+    @SerialName("parse_mode") val parseMode: String? = null,
+    @SerialName("disable_web_page_preview") val disableWebPagePreview: Boolean? = null
 ) : InputMessageContent()
 
 
@@ -53,6 +53,6 @@ import kotlinx.serialization.*
     val longitude: Float,
     val title: String,
     val address: String,
-    @Optional @SerialName("foursquare_id") val foursquareId: String? = null,
-    @Optional @SerialName("foursquare_type") val foursquareType: String? = null
+    @SerialName("foursquare_id") val foursquareId: String? = null,
+    @SerialName("foursquare_type") val foursquareType: String? = null
 ) : InputMessageContent()

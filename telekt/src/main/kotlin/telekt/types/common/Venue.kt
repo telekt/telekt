@@ -1,6 +1,5 @@
 package rocks.waffle.telekt.types
 
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,6 +8,6 @@ import kotlinx.serialization.Serializable
     val location: Location,
     val title: String,
     val address: String,
-    @Optional @SerialName("foursquare_id") val foursquareId: String? = null,
-    @Optional @SerialName("foursquare_type") val foursquareType: String? = null
+    @SerialName("foursquare_id") val foursquareId: String? = null,
+    @SerialName("foursquare_type") val foursquareType: String? = null
 )

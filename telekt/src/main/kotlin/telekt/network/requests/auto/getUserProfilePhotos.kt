@@ -16,9 +16,9 @@ import rocks.waffle.telekt.types.UserProfilePhotos
     /** Unique identifier of the target user */
     @SerialName("user_id") val userId: Int,
     /** Sequential number of the first photo to be returned. By default, all photos are returned. */
-    @Optional val offset: Int? = null,
+    val offset: Int? = null,
     /** Limits the number of photos to be retrieved. Values between 1—100 are accepted. Defaults to 100. */
-    @Optional val limit: Int? = null
+    val limit: Int? = null
 ) : SimpleRequest<UserProfilePhotos>() {
     @Transient override val method = TelegramMethod.getUserProfilePhotos
     @Transient override val resultDeserializer: KSerializer<out UserProfilePhotos> = UserProfilePhotos.serializer()

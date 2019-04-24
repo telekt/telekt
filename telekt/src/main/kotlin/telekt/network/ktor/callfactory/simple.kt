@@ -9,11 +9,12 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.content.TextContent
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import rocks.waffle.telekt.network.requests.abstracts.SimpleRequest
 
 
 class SimpleCallFactory : KtorCallFactory<Any, SimpleRequest<Any>> {
-    private val json = Json(encodeDefaults = false)
+    private val json = Json(JsonConfiguration(encodeDefaults = false))
 
     override suspend fun <R : SimpleRequest<Any>> prepareCall(client: HttpClient, baseUrl: String, request: R): HttpClientCall =
         client.call {

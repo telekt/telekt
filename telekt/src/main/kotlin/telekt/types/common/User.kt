@@ -1,6 +1,5 @@
 package rocks.waffle.telekt.types
 
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,7 +8,7 @@ import kotlinx.serialization.Serializable
     val id: Long,
     @SerialName("is_bot") val isBot: Boolean,
     @SerialName("first_name") val firstName: String,
-    @Optional @SerialName("last_name") val lastName: String? = null,
-    @Optional val username: String? = null,
-    @Optional @SerialName("language_code") val languageCode: String? = null
+    @SerialName("last_name") val lastName: String? = null,
+    val username: String? = null,
+    @SerialName("language_code") val languageCode: String? = null
 )

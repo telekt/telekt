@@ -13,12 +13,13 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import kotlinx.io.streams.asInput
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import kotlinx.serialization.json.JsonPrimitive
 import rocks.waffle.telekt.network.requests.abstracts.MultipartRequest
 
 
 class MultipartRequestCallFactory : KtorCallFactory<Any, MultipartRequest<*>> {
-    private val json = Json(encodeDefaults = false)
+    private val json = Json(JsonConfiguration(encodeDefaults = false))
 
     override suspend fun <R : MultipartRequest<*>> prepareCall(client: HttpClient, baseUrl: String, request: R): HttpClientCall =
         client.call {

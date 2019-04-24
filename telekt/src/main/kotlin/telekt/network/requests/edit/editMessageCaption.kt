@@ -1,7 +1,6 @@
 package rocks.waffle.telekt.network.requests.edit
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -23,11 +22,11 @@ import rocks.waffle.telekt.util.serializer
     /** Identifier of the inline message */
     @SerialName("inline_message_id") val inlineMessageId: String,
     /** New caption of the message */
-    @Optional val caption: String? = null,
+    val caption: String? = null,
     /** Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption. */
-    @Optional @SerialName("parse_mode") val parseMode: ParseMode? = null,
+    @SerialName("parse_mode") val parseMode: ParseMode? = null,
     /** A JSON-serialized object for an inline keyboard. */
-    @Optional @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
 ) : SimpleRequest<Unit>() {
     @Transient override val method = TelegramMethod.editMessageCaption
     @Transient override val resultDeserializer: KSerializer<out Unit> = Unit.serializer()
@@ -46,11 +45,11 @@ import rocks.waffle.telekt.util.serializer
     /** Identifier of the sent message */
     @SerialName("message_id") val messageId: Int,
     /** New caption of the message */
-    @Optional val caption: String? = null,
+    val caption: String? = null,
     /** Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption. */
-    @Optional @SerialName("parse_mode") val parseMode: ParseMode? = null,
+    @SerialName("parse_mode") val parseMode: ParseMode? = null,
     /** A JSON-serialized object for an inline keyboard. */
-    @Optional @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
 ) : SimpleRequest<Message>() {
     @Transient override val method = TelegramMethod.editMessageCaption
     @Transient override val resultDeserializer: KSerializer<out Message> = Message.serializer()

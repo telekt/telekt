@@ -1,6 +1,5 @@
 package rocks.waffle.telekt.network
 
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import rocks.waffle.telekt.network.requests.abstracts.Request
@@ -23,14 +22,14 @@ suspend fun Api.downloadFile(token: String, path: String, destination: String): 
 @Serializable
 data class TResponse<T>( // Needed for parsing telegram response with Jackson.
     val ok: Boolean,
-    @Optional val result: T? = null,
-    @Optional @SerialName("description") val errorDescription: String? = null,
-    @Optional @SerialName("error_code") val errorCode: Int? = null,
-    @Optional val parameters: ResponseParameters? = null
+    val result: T? = null,
+    @SerialName("description") val errorDescription: String? = null,
+    @SerialName("error_code") val errorCode: Int? = null,
+    val parameters: ResponseParameters? = null
 )
 
 @Serializable
 data class ResponseParameters(
-    @Optional @SerialName("migrate_to_chat_id") val migrateCoChatId: Long? = null,
-    @Optional @SerialName("retry_after") val retryAfter: Int? = null
+    @SerialName("migrate_to_chat_id") val migrateCoChatId: Long? = null,
+    @SerialName("retry_after") val retryAfter: Int? = null
 )

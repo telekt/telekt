@@ -26,14 +26,14 @@ import rocks.waffle.telekt.types.Update
      * The negative offset can be specified to retrieve updates starting from -offset update from the end of the updates queue.
      * All previous updates will forgotten.
      */
-    @Optional val offset: Int? = null,
+    val offset: Int? = null,
     /** Limits the number of updates to be retrieved. Values between 1—100 are accepted. Defaults to 100. */
-    @Optional val limit: Byte? = null,
+    val limit: Byte? = null,
     /**
      * Timeout in seconds for long polling. Defaults to 0, i.e. usual short polling.
      * Should be positive, short polling should be used for testing purposes only.
      */
-    @Optional val timeout: Int? = null,
+    val timeout: Int? = null,
     /**
      * List the types of updates you want your bot to receive.
      * For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types.
@@ -42,7 +42,7 @@ import rocks.waffle.telekt.types.Update
      * Please note that this parameter doesn't affect updates created before the call to the getUpdates,
      * so unwanted updates may be received for a short period of time.
      */
-    @Optional val allowedUpdates: List<String>? = null
+    val allowedUpdates: List<String>? = null
 ) : SimpleRequest<List<Update>>() {
     @Transient override val method: TelegramMethod = TelegramMethod.getUpdates
     @Transient override val resultDeserializer: KSerializer<out List<Update>> = Update.serializer().list

@@ -25,11 +25,11 @@ import kotlinx.serialization.Transient
     /** List of answer options, 2-10 strings 1-100 characters each */
     val options: List<String>,
     /** Sends the message silently. Users will receive a notification with no sound. */
-    @Optional @SerialName("disable_notification") val disableNotification: Boolean? = null,
+    @SerialName("disable_notification") val disableNotification: Boolean? = null,
     /** If the message is a reply, ID of the original message */
-    @Optional @SerialName("reply_to_message_id") val replyToMessageId: Int? = null,
+    @SerialName("reply_to_message_id") val replyToMessageId: Int? = null,
     /** Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user. */
-    @Optional @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : SimpleRequest<Message>() {
     @Transient override val method = TelegramMethod.sendPoll
     @Transient override val resultDeserializer: KSerializer<out Message> = Message.serializer()
