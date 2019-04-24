@@ -1,13 +1,26 @@
 package rocks.waffle.telekt.types
 
-import kotlinx.serialization.Optional
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 
 
 // `@Serializable`? (Will it work? Polimorphic serializer?...)
 /** This object represents the content of a message to be sent as a result of an inline query. Telegram clients currently support the following 4 types */
-sealed class InputMessageContent
+@Serializable(with = InputMessageContentSerializer::class) sealed class InputMessageContent
+
+
+@Serializer(forClass = InputMessageContent::class) object InputMessageContentSerializer : KSerializer<InputMessageContent> {
+    override fun deserialize(decoder: Decoder): InputMessageContent {
+        throw NotImplementedError()
+    }
+
+    override fun serialize(encoder: Encoder, obj: InputMessageContent) = when (obj) {
+            is InputContactMessageContent -> InputContactMessageContent.serializer().serialize(encoder, obj)
+            is InputLocationMessageContent -> InputLocationMessageContent.serializer().serialize(encoder, obj)
+            is InputTextMessageContent -> InputTextMessageContent.serializer().serialize(encoder, obj)
+            is InputVenueMessageContent -> InputVenueMessageContent.serializer().serialize(encoder, obj)
+    }
+
+}
 
 /** Represents the content of a contact message to be sent as the result of an inline query. */
 @Serializable data class InputContactMessageContent(
