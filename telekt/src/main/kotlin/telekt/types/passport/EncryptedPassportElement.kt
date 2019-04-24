@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 import rocks.waffle.telekt.types.enums.EncryptedPassportElementType
 
 @Serializable
-class EncryptedPassportElement(
+data class EncryptedPassportElement(
     val type: EncryptedPassportElementType,
     @Optional val data: String? = null,
     @SerialName("phone_number") @Optional val phoneNumber: String? = null,

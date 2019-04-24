@@ -25,7 +25,7 @@ import rocks.waffle.telekt.util.enumByValueSerializer
     abstract val message: String
 }
 
-@Serializable class PassportElementErrorDataField(
+@Serializable data class PassportElementErrorDataField(
     val type: Type,
     @SerialName("field_name") val fieldName: String,
     @SerialName("data_hash") val dataHash: String,
@@ -45,7 +45,7 @@ import rocks.waffle.telekt.util.enumByValueSerializer
     }
 }
 
-@Serializable class PassportElementErrorFrontSide(
+@Serializable data class PassportElementErrorFrontSide(
     val type: Type,
     @SerialName("file_hash") val fileHash: String,
     override val message: String
@@ -62,7 +62,7 @@ import rocks.waffle.telekt.util.enumByValueSerializer
     }
 }
 
-@Serializable class PassportElementErrorReverseSide(
+@Serializable data class PassportElementErrorReverseSide(
     val type: Type,
     @SerialName("file_hash") val fileHash: String,
     override val message: String
@@ -77,7 +77,7 @@ import rocks.waffle.telekt.util.enumByValueSerializer
     }
 }
 
-@Serializable class PassportElementErrorSelfie(
+@Serializable data class PassportElementErrorSelfie(
     val type: Type,
     @SerialName("file_hash") val fileHash: String,
     override val message: String
@@ -94,7 +94,7 @@ import rocks.waffle.telekt.util.enumByValueSerializer
     }
 }
 
-@Serializable class PassportElementErrorFile(
+@Serializable data class PassportElementErrorFile(
     val type: Type,
     @SerialName("file_hash") val fileHash: String,
     override val message: String
@@ -112,7 +112,7 @@ import rocks.waffle.telekt.util.enumByValueSerializer
     }
 }
 
-@Serializable class PassportElementErrorTranslationFile(
+@Serializable data class PassportElementErrorTranslationFile(
     val type: Type,
     @SerialName("file_hashes") val fileHashes: List<String>,
     override val message: String
@@ -134,7 +134,7 @@ import rocks.waffle.telekt.util.enumByValueSerializer
     }
 }
 
-@Serializable class PassportElementErrorUnspecified(
+@Serializable data class PassportElementErrorUnspecified(
     val type: String,
     @SerialName("element_hash") val elementHash: String,
     override val message: String
