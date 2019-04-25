@@ -17,7 +17,7 @@ import rocks.waffle.telekt.util.serializer
     /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
     @SerialName("chat_id") val chatId: Recipient,
     /** New chat description, 0-255 characters */
-    @Optional val description: String? = null
+    val description: String? = null
 ) : SimpleRequest<Unit>() {
     @Transient override val method = TelegramMethod.setChatDescription
     @Transient override val resultDeserializer: KSerializer<out Unit> = Unit.serializer()

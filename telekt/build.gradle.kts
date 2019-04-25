@@ -1,7 +1,7 @@
 group = "rocks.waffle.telekt"
-version = "0.1.0"
+version = "0.2.0"
 
-val kotlinVersion = "1.3.21"
+val kotlinVersion = "1.3.30"
 val ktorVersion = "1.1.3"
 val kotlinxIoVersion = "0.1.0"
 
@@ -14,8 +14,8 @@ buildscript {
     repositories { jcenter() }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.21") // TODO: version to val
-        classpath("org.jetbrains.kotlin:kotlin-serialization:1.3.21")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.30") // TODO: version to val
+        classpath("org.jetbrains.kotlin:kotlin-serialization:1.3.30")
     }
 }
 
@@ -37,7 +37,7 @@ repositories {
 
 dependencies {
     // kotlinx serialization
-    api("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.10.0")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.0")
 
     // coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.0-alpha")

@@ -14,6 +14,7 @@ import kotlinx.coroutines.io.readUTF8Line
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import mu.KotlinLogging
 import rocks.waffle.telekt.exceptions.*
 import rocks.waffle.telekt.network.Api
@@ -56,7 +57,7 @@ class KtorApi(
 
     private val baseUrl = "https://$host$API_PATH_PATTERN"
 
-    private val jsonParser = Json(strictMode = false)
+    private val jsonParser = Json(JsonConfiguration(strictMode = false))
 
 
     /** Close client */

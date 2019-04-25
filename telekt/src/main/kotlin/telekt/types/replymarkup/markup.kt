@@ -26,7 +26,7 @@ import kotlinx.serialization.*
  * By default, custom keyboards are displayed until a new keyboard is sent by a bot.
  * An exception is made for one-time keyboards that are hidden immediately after the user presses a button (see [ReplyKeyboardMarkup]).
  */
-@Serializable data class ReplyKeyboardRemove(@Optional val selective: Boolean? = null) : ReplyMarkup() {
+@Serializable data class ReplyKeyboardRemove(val selective: Boolean? = null) : ReplyMarkup() {
     @SerialName("remove_keyboard")
     val removeKeyboard = true
 }
@@ -34,9 +34,9 @@ import kotlinx.serialization.*
 /** This object represents a custom keyboard with reply options (see Introduction to bots for details and examples). */
 @Serializable /* no data cause of vararg */ class ReplyKeyboardMarkup(
     vararg val keyboard: Array<KeyboardButton>,
-    @Optional @SerialName("resize_keyboard") val resizeKeyboard: Boolean? = null,
-    @Optional @SerialName("one_time_keyboard") val oneTimeKeyboard: Boolean? = null,
-    @Optional val selective: Boolean? = null
+    @SerialName("resize_keyboard") val resizeKeyboard: Boolean? = null,
+    @SerialName("one_time_keyboard") val oneTimeKeyboard: Boolean? = null,
+    val selective: Boolean? = null
 ) : ReplyMarkup()
 
 /**
@@ -46,5 +46,5 @@ import kotlinx.serialization.*
  */
 @Serializable data class ForceReply(
     @SerialName("force_reply") val forceReply: Boolean,
-    @Optional val selective: Boolean? = null
+    val selective: Boolean? = null
 ) : ReplyMarkup()

@@ -1,7 +1,6 @@
 package rocks.waffle.telekt.network.requests.edit
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -25,11 +24,11 @@ import rocks.waffle.telekt.util.serializer
     /** New text of the message */
     val text: String,
     /** Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message. */
-    @Optional @SerialName("parse_mode") val parseMode: ParseMode? = null,
+    @SerialName("parse_mode") val parseMode: ParseMode? = null,
     /** Disables link previews for links in this message */
-    @Optional @SerialName("disable_web_page_preview") val disableWebPagePreview: Boolean? = null,
+    @SerialName("disable_web_page_preview") val disableWebPagePreview: Boolean? = null,
     /** A JSON-serialized object for an inline keyboard. */
-    @Optional @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
 ) : SimpleRequest<Unit>() {
     @Transient override val method = TelegramMethod.editMessageText
     @Transient override val resultDeserializer: KSerializer<out Unit> = Unit.serializer()
@@ -51,11 +50,11 @@ import rocks.waffle.telekt.util.serializer
     /** New text of the message */
     val text: String,
     /** Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message. */
-    @Optional @SerialName("parse_mode") val parseMode: ParseMode? = null,
+    @SerialName("parse_mode") val parseMode: ParseMode? = null,
     /** Disables link previews for links in this message */
-    @Optional @SerialName("disable_web_page_preview") val disableWebPagePreview: Boolean? = null,
+    @SerialName("disable_web_page_preview") val disableWebPagePreview: Boolean? = null,
     /** A JSON-serialized object for an inline keyboard. */
-    @Optional @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
 ) : SimpleRequest<Message>() {
     @Transient override val method = TelegramMethod.editMessageText
     @Transient override val resultDeserializer: KSerializer<out Message> = Message.serializer()

@@ -1,6 +1,5 @@
 package rocks.waffle.telekt.types
 
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,5 +8,5 @@ import kotlinx.serialization.Serializable
     @SerialName("file_id") val fileId: String,
     val width: Int,
     val height: Int,
-    @Optional @SerialName("file_size") val fileSize: Int? = null
+    @SerialName("file_size") val fileSize: Int? = null
 )

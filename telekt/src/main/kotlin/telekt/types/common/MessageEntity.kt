@@ -1,6 +1,5 @@
 package rocks.waffle.telekt.types
 
-import kotlinx.serialization.Optional
 import kotlinx.serialization.Serializable
 import rocks.waffle.telekt.types.enums.MessageEntityType
 
@@ -9,6 +8,6 @@ import rocks.waffle.telekt.types.enums.MessageEntityType
     val type: MessageEntityType,
     val offset: Int,
     val length: Int,
-    @Optional val url: String? = null,
-    @Optional val user: User? = null
+    val url: String? = null,
+    val user: User? = null
 )

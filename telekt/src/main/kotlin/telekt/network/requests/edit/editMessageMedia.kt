@@ -1,7 +1,6 @@
 package rocks.waffle.telekt.network.requests.edit
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -28,7 +27,7 @@ import rocks.waffle.telekt.util.serializer
     /** A JSON-serialized object for a new media content of the message */
     val media: InputMedia,
     /** A JSON-serialized object for a new inline keyboard. */
-    @Optional @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
 ) : SimpleRequest<Unit>() {
     @Transient override val method = TelegramMethod.editMessageMedia
     @Transient override val resultDeserializer: KSerializer<out Unit> = Unit.serializer()
@@ -52,7 +51,7 @@ import rocks.waffle.telekt.util.serializer
     /** A JSON-serialized object for a new media content of the message */
     val media: InputMedia,
     /** A JSON-serialized object for a new inline keyboard. */
-    @Optional @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
 ) : SimpleRequest<Message>() {
     @Transient override val method = TelegramMethod.editMessageMedia
     @Transient override val resultDeserializer: KSerializer<out Message> = Message.serializer()

@@ -19,7 +19,7 @@ import rocks.waffle.telekt.util.serializer
     /** Unique identifier of the target user */
     @SerialName("user_id") val userId: Int,
     /** Date when the user will be unbanned, unix time. If user is banned for more than 366 days or less than 30 seconds from the current time they are considered to be banned forever */
-    @Optional @SerialName("until_date") val untilDate: Int? = null
+    @SerialName("until_date") val untilDate: Int? = null
 ) : SimpleRequest<Unit>() {
     @Transient override val method = TelegramMethod.kickChatMember
     @Transient override val resultDeserializer: KSerializer<out Unit> = Unit.serializer()

@@ -1,7 +1,6 @@
 package rocks.waffle.telekt.network.requests.auto
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -37,35 +36,35 @@ import rocks.waffle.telekt.util.Recipient
     /** Price breakdown, a list of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.) */
     val prices: List<LabeledPrice>,
     /** JSON-encoded data about the invoice, which will be shared with the payment provider. A detailed description of required fields should be provided by the payment provider. */
-    @Optional @SerialName("provider_data") val providerData: String? = null,
+    @SerialName("provider_data") val providerData: String? = null,
     /** URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for. */
-    @Optional @SerialName("photo_url") val photoUrl: String? = null,
+    @SerialName("photo_url") val photoUrl: String? = null,
     /** Photo size */
-    @Optional @SerialName("photo_size") val photoSize: Int? = null,
+    @SerialName("photo_size") val photoSize: Int? = null,
     /** Photo width */
-    @Optional @SerialName("photo_width") val photoWidth: Int? = null,
+    @SerialName("photo_width") val photoWidth: Int? = null,
     /** Photo height */
-    @Optional @SerialName("photo_height") val photoHeight: Int? = null,
+    @SerialName("photo_height") val photoHeight: Int? = null,
     /** Pass True, if you require the user's full name to complete the order */
-    @Optional @SerialName("need_name") val needName: Boolean? = null,
+    @SerialName("need_name") val needName: Boolean? = null,
     /** Pass True, if you require the user's phone number to complete the order */
-    @Optional @SerialName("need_phone_number") val needPhoneNumber: Boolean? = null,
+    @SerialName("need_phone_number") val needPhoneNumber: Boolean? = null,
     /** Pass True, if you require the user's email address to complete the order */
-    @Optional @SerialName("need_email") val needEmail: Boolean? = null,
+    @SerialName("need_email") val needEmail: Boolean? = null,
     /** Pass True, if you require the user's shipping address to complete the order */
-    @Optional @SerialName("need_shipping_address") val needShippingAddress: Boolean? = null,
+    @SerialName("need_shipping_address") val needShippingAddress: Boolean? = null,
     /** Pass True, if user's phone number should be sent to provider */
-    @Optional @SerialName("send_phone_number_to_provider") val sendPhoneNumberToProvider: Boolean? = null,
+    @SerialName("send_phone_number_to_provider") val sendPhoneNumberToProvider: Boolean? = null,
     /** Pass True, if user's email address should be sent to provider */
-    @Optional @SerialName("send_email_to_provider") val sendEmailToProvider: Boolean? = null,
+    @SerialName("send_email_to_provider") val sendEmailToProvider: Boolean? = null,
     /** Pass True, if the final price depends on the shipping method */
-    @Optional @SerialName("is_flexible") val isFlexible: Boolean? = null,
+    @SerialName("is_flexible") val isFlexible: Boolean? = null,
     /** Sends the message silently. Users will receive a notification with no sound. */
-    @Optional @SerialName("disable_notification") val disableNotification: Boolean? = null,
+    @SerialName("disable_notification") val disableNotification: Boolean? = null,
     /** If the message is a reply, ID of the original message */
-    @Optional @SerialName("reply_to_message_id") val replyToMessageId: Int? = null,
+    @SerialName("reply_to_message_id") val replyToMessageId: Int? = null,
     /** A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button. */
-    @Optional @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
 ) : SimpleRequest<Message>() {
     @Transient override val method = TelegramMethod.sendInvoice
     @Transient override val resultDeserializer: KSerializer<out Message> = Message.serializer()

@@ -22,9 +22,9 @@ import rocks.waffle.telekt.util.Recipient
     /** A JSON-serialized array describing photos and videos to be sent, must include 2–10 items */
     val media: List<InputMedia>,
     /** Sends the messages silently. Users will receive a notification with no sound. */
-    @Optional @SerialName("disable_notification") val disableNotification: Boolean? = null,
+    @SerialName("disable_notification") val disableNotification: Boolean? = null,
     /** If the messages are a reply, ID of the original message */
-    @Optional @SerialName("reply_to_message_id") val replyToMessageId: Int? = null
+    @SerialName("reply_to_message_id") val replyToMessageId: Int? = null
 ) : MultipartRequest<List<Message>>() {
     @Transient override val method = TelegramMethod.sendMediaGroup
     @Transient override val resultDeserializer: KSerializer<out List<Message>> = Message.serializer().list

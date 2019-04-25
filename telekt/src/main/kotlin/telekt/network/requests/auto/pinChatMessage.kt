@@ -19,7 +19,7 @@ import rocks.waffle.telekt.util.serializer
     /** Identifier of a message to pin */
     @SerialName("message_id") val messageId: Int,
     /** Pass True, if it is not necessary to send a notification to all chat members about the new pinned message. Notifications are always disabled in channels. */
-    @Optional @SerialName("disable_notification") val disableNotification: Boolean? = null
+    @SerialName("disable_notification") val disableNotification: Boolean? = null
 ) : SimpleRequest<Unit>() {
     @Transient override val method = TelegramMethod.pinChatMessage
     @Transient override val resultDeserializer: KSerializer<out Unit> = Unit.serializer()

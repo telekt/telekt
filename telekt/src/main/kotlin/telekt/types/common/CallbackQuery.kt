@@ -1,6 +1,5 @@
 package rocks.waffle.telekt.types
 
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -10,11 +9,11 @@ import rocks.waffle.telekt.contrib.filters.TextableTelegramEvent
 @Serializable data class CallbackQuery(
     val id: String,
     val from: User,
-    @Optional val message: Message? = null,
-    @Optional @SerialName("inline_message_id") val inlineMessageId: String? = null,
+    val message: Message? = null,
+    @SerialName("inline_message_id") val inlineMessageId: String? = null,
     @SerialName("chat_instance") val chatInstance: String,
-    @Optional val data: String? = null,
-    @Optional @SerialName("game_short_name") val gameShortName: String? = null
+    val data: String? = null,
+    @SerialName("game_short_name") val gameShortName: String? = null
 ) : TextableTelegramEvent {
     @Transient    override val eventText: String?
         get() = data

@@ -19,15 +19,15 @@ import rocks.waffle.telekt.util.serializer
     /** Unique identifier of the target user */
     @SerialName("user_id") val userId: Int,
     /** Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever */
-    @Optional @SerialName("until_date") val untilDate: Int? = null,
+    @SerialName("until_date") val untilDate: Int? = null,
     /** Pass True, if the user can send text messages, contacts, locations and venues */
-    @Optional @SerialName("can_send_messages") val canSendMessages: Boolean? = null,
+    @SerialName("can_send_messages") val canSendMessages: Boolean? = null,
     /** Pass True, if the user can send audios, documents, photos, videos, video notes and voice notes, implies can_send_messages */
-    @Optional @SerialName("can_send_media_messages") val canSendMediaMessages: Boolean? = null,
+    @SerialName("can_send_media_messages") val canSendMediaMessages: Boolean? = null,
     /** Pass True, if the user can send animations, games, stickers and use inline bots, implies can_send_media_messages */
-    @Optional @SerialName("can_send_other_messages") val canSendOtherMessages: Boolean? = null,
+    @SerialName("can_send_other_messages") val canSendOtherMessages: Boolean? = null,
     /** Pass True, if the user may add web page previews to their messages, implies can_send_media_messages */
-    @Optional @SerialName("can_add_web_page_previews") val canAddWebPagePreviews: Boolean? = null
+    @SerialName("can_add_web_page_previews") val canAddWebPagePreviews: Boolean? = null
 ) : SimpleRequest<Unit>() {
     @Transient override val method = TelegramMethod.restrictChatMember
     @Transient override val resultDeserializer: KSerializer<out Unit> = Unit.serializer()

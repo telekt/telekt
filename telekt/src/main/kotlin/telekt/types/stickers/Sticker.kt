@@ -1,6 +1,5 @@
 package rocks.waffle.telekt.types
 
-import kotlinx.serialization.Optional
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,9 +8,9 @@ import kotlinx.serialization.Serializable
     @SerialName("file_id") val fileId: String,
     val width: Int,
     val height: Int,
-    @Optional val thumb: PhotoSize? = null,
-    @Optional val emoji: String? = null,
-    @Optional @SerialName("set_name") val setName: String? = null,
-    @Optional @SerialName("mask_position") val maskPosition: MaskPosition? = null,
-    @Optional @SerialName("file_size") val fileSize: Int? = null
+    val thumb: PhotoSize? = null,
+    val emoji: String? = null,
+    @SerialName("set_name") val setName: String? = null,
+    @SerialName("mask_position") val maskPosition: MaskPosition? = null,
+    @SerialName("file_size") val fileSize: Int? = null
 )
