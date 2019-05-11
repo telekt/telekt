@@ -5,6 +5,7 @@ import kotlinx.serialization.json.Json
 import rocks.waffle.telekt.network.TelegramMethod
 import rocks.waffle.telekt.network.requests.abstracts.SimpleRequest
 import rocks.waffle.telekt.types.Update
+import rocks.waffle.telekt.types.enums.AllowedUpdate
 
 /**
  * [GetUpdates] request
@@ -42,7 +43,7 @@ import rocks.waffle.telekt.types.Update
      * Please note that this parameter doesn't affect updates created before the call to the getUpdates,
      * so unwanted updates may be received for a short period of time.
      */
-    val allowedUpdates: List<String>? = null
+    @SerialName("allowed_updates") val allowedUpdates: List<AllowedUpdate>? = null
 ) : SimpleRequest<List<Update>>() {
     @Transient override val method: TelegramMethod = TelegramMethod.getUpdates
     @Transient override val resultDeserializer: KSerializer<out List<Update>> = Update.serializer().list

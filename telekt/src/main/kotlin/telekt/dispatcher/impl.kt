@@ -1,12 +1,15 @@
 package rocks.waffle.telekt.dispatcher
 
 import com.kizitonwose.time.seconds
-import kotlinx.coroutines.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.fsm.BaseStorage
 import rocks.waffle.telekt.fsm.DisabledStorage
 import rocks.waffle.telekt.types.Update
+import rocks.waffle.telekt.types.enums.AllowedUpdate
 import rocks.waffle.telekt.types.events.*
 
 
@@ -151,7 +154,7 @@ class DispatcherImpl(
         }
     }
 
-    override suspend fun poll(relax: Float, resetWebhook: Boolean?, timeout: Int, limit: Byte?, allowedUpdates: List<String>?) =
+    override suspend fun poll(relax: Float, resetWebhook: Boolean?, timeout: Int, limit: Byte?, allowedUpdates: List<AllowedUpdate>?) =
         coroutineScope {
             if (isPolling) throw RuntimeException("Polling already started")
 
@@ -164,7 +167,7 @@ class DispatcherImpl(
                 while (isPolling) {
                     var updates: List<Update>?
                     try {
-                        updates = bot.getUpdates(offset = offset, limit = limit, timeout = timeout)
+                        updates = bot.getUpdates(offset = offset, limit = limit, timeout = timeout, allowedUpdates = allowedUpdates)
                     } catch (e: java.net.SocketTimeoutException) {
                         // Telegram have no updates for us
                         continue

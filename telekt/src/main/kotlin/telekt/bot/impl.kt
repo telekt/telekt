@@ -10,6 +10,7 @@ import rocks.waffle.telekt.network.requests.etc.DeleteMessage
 import rocks.waffle.telekt.network.requests.etc.GetMe
 import rocks.waffle.telekt.network.requests.etc.GetUpdates
 import rocks.waffle.telekt.types.*
+import rocks.waffle.telekt.types.enums.AllowedUpdate
 import rocks.waffle.telekt.types.enums.ParseMode
 import rocks.waffle.telekt.types.passport.PassportElementError
 import rocks.waffle.telekt.util.Recipient
@@ -31,7 +32,7 @@ class BotImpl(
     //<editor-fold desc="api">
     override suspend fun getMe(): User = api.makeRequest(token, GetMe())
 
-    override suspend fun getUpdates(offset: Int?, limit: Byte?, timeout: Int?, allowedUpdates: List<String>?): List<Update> =
+    override suspend fun getUpdates(offset: Int?, limit: Byte?, timeout: Int?, allowedUpdates: List<AllowedUpdate>?): List<Update> =
         api.makeRequest(
             token,
             GetUpdates(offset, limit, timeout, allowedUpdates)

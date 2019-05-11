@@ -6,6 +6,7 @@ import rocks.waffle.telekt.network.InputFile
 import rocks.waffle.telekt.network.requests.edit.StopMessageLiveLocation
 import rocks.waffle.telekt.network.requests.edit.StopMessageLiveLocationInline
 import rocks.waffle.telekt.types.*
+import rocks.waffle.telekt.types.enums.AllowedUpdate
 import rocks.waffle.telekt.types.enums.ParseMode
 import rocks.waffle.telekt.types.passport.PassportElementError
 import rocks.waffle.telekt.util.Recipient
@@ -80,7 +81,7 @@ interface Bot {
         offset: Int? = null,
         limit: Byte? = null,
         timeout: Int? = null,
-        allowedUpdates: List<String>? /* Enum? */ = null
+        allowedUpdates: List<AllowedUpdate>? = null
     ): List<Update>
 
     /**

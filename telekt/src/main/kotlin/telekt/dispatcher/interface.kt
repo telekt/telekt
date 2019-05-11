@@ -3,8 +3,8 @@ package rocks.waffle.telekt.dispatcher
 import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.fsm.BaseStorage
 import rocks.waffle.telekt.types.Update
+import rocks.waffle.telekt.types.enums.AllowedUpdate
 import rocks.waffle.telekt.types.events.*
-import rocks.waffle.telekt.types.Poll
 
 
 @Suppress("FunctionName")
@@ -42,7 +42,7 @@ interface Dispatcher {
         resetWebhook: Boolean? = null,
         timeout: Int = 20,
         limit: Byte? = null,
-        allowedUpdates: List<String>? = null
+        allowedUpdates: List<AllowedUpdate>? = null
     ): Unit
 
     /**
