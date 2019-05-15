@@ -4,7 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.call
 import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.BadResponseStatusException
+import io.ktor.client.features.ResponseException
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.accept
 import io.ktor.client.request.forms.MultiPartFormDataContent
@@ -88,7 +88,7 @@ internal class TelegramClient(
         logger.debug { "Request [$request] was successfully made to telegram api with result=$response" }
 
         result
-    } catch (e: BadResponseStatusException) { throw checkTelegramError(e) }
+    } catch (e: ResponseException) { throw checkTelegramError(e) }
 
     suspend fun downloadFile(token: String, path: String, destination: Path) {
         logger.debug { "Downloading file from (telegram)/$path to $destination..." }
@@ -120,7 +120,7 @@ internal class TelegramClient(
      *
      * @return Detected exception
      */
-    private suspend fun checkTelegramError(exception: BadResponseStatusException): TelegramAPIException {
+    private suspend fun checkTelegramError(exception: ResponseException): TelegramAPIException {
         val response = exception.response.readText()
         val answer = json.parse(TResponse.serializer(Unit.serializer()), response)
         return checkTelegramError(answer)
@@ -206,10 +206,11 @@ internal class TelegramClient(
                     }
 
                     request.mediaMap.forEach { (key, value) ->
-                        append(key, value.file.inputStream().asInput(), Headers.build {
+                        val headers = Headers.build {
                             append(HttpHeaders.ContentType, value.mimeType)
                             append(HttpHeaders.ContentDisposition, "filename=${value.filename}")
-                        })
+                        }
+                        appendInput(key, headers) { value.file.inputStream().asInput() }
                     }
                 }
             )
