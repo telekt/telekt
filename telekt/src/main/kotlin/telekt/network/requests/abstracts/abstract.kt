@@ -7,7 +7,7 @@ import rocks.waffle.telekt.network.InputFile
 import rocks.waffle.telekt.network.MultipartFile
 import rocks.waffle.telekt.network.TelegramMethod
 
-sealed class Request<out T : Any> {
+sealed class Request<T : Any> {
     /** Name of telegram method */
     abstract val method: TelegramMethod
 
@@ -15,9 +15,8 @@ sealed class Request<out T : Any> {
     abstract val resultDeserializer: KSerializer<out T>
 }
 
-
-abstract class MultipartRequest<out T : Any> : Request<T>() {
-    abstract fun paramsJson(json: Json = Json.plain): JsonElement
+abstract class MultipartRequest<T : Any> : Request<T>() {
+    abstract fun paramsJson(json: Json): JsonElement
     abstract val mediaMap: Map<String, MultipartFile>
     open val attach: Boolean = false
 }
@@ -35,9 +34,9 @@ fun Map<String, InputFile?>.asMediaMap(): Map<String, MultipartFile> = mapNotNul
 }.toMap()
 
 
-abstract class SimpleRequest<out T : Any> : Request<T>(), SelfSerializable
+abstract class SimpleRequest<T : Any> : Request<T>(), SelfSerializable
 
 
 interface SelfSerializable {
-    fun stringify(json: Json = Json()): String
+    fun stringify(json: Json): String
 }

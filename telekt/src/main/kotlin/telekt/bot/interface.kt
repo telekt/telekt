@@ -1,7 +1,9 @@
 package rocks.waffle.telekt.bot
 
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.Deferred
 import rocks.waffle.telekt.network.Api
+import rocks.waffle.telekt.network.DefaultApi
 import rocks.waffle.telekt.network.InputFile
 import rocks.waffle.telekt.network.requests.edit.StopMessageLiveLocation
 import rocks.waffle.telekt.network.requests.edit.StopMessageLiveLocationInline
@@ -15,11 +17,8 @@ import java.nio.file.Paths
 
 /** Bot factory */
 @Suppress("FunctionName")
-fun Bot(token: String, defaultParseMode: ParseMode? = null): Bot = BotImpl(token, defaultParseMode = defaultParseMode)
-
-/** Bot factory */
-@Suppress("FunctionName")
-fun Bot(token: String, api: Api, defaultParseMode: ParseMode? = null): Bot = BotImpl(token, api, defaultParseMode = defaultParseMode)
+fun Bot(token: String, client: HttpClient? = null, api: Api = DefaultApi, defaultParseMode: ParseMode? = null): Bot =
+    BotImpl(token, client = client, api = api, defaultParseMode = defaultParseMode)
 
 suspend fun Bot.downloadFile(path: String, destination: String): Unit = downloadFile(path, Paths.get(destination))
 
@@ -1108,5 +1107,5 @@ interface Bot {
 
     //</editor-fold>
 
-    suspend fun close(): Unit
+    fun close(): Unit
 }
