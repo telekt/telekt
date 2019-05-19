@@ -19,14 +19,17 @@ import rocks.waffle.telekt.util.Recipient
 import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
 
+const val defaultTimeout: Long = 15000
 
 class BotImpl(
     private val token: String,
     client: HttpClient? = null,
     api: Api = DefaultApi,
-    private val defaultParseMode: ParseMode? = null
+    private val defaultParseMode: ParseMode? = null,
+    requestTimeout: Long? = null
 ) : Bot, CoroutineScope {
-    private val network = TelegramClient(client, api)
+    private val requestTimeout_ = requestTimeout ?: defaultTimeout
+    private val network = TelegramClient(client, api, requestTimeout_)
 
     //<editor-fold desc="lazy me">
     private val job = Job()
@@ -42,7 +45,9 @@ class BotImpl(
     override suspend fun getUpdates(offset: Int?, limit: Byte?, timeout: Int?, allowedUpdates: List<AllowedUpdate>?): List<Update> =
         network.makeRequest(
             token,
-            GetUpdates(offset, limit, timeout, allowedUpdates)
+            GetUpdates(offset, limit, timeout, allowedUpdates),
+            /** ([getUpdates] timeout in millis) + (default request timeout / 2) */
+            timeout = timeout?.let { (it * 1000 + requestTimeout_ / 2) }
         )
 
     override suspend fun deleteMessage(chatId: Recipient, messageId: Int) =

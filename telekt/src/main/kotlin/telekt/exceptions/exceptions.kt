@@ -80,6 +80,9 @@ class TokenValidationException : Exception("Token is invalid!")
 
 class PollingWasAlreadyStopped : Exception("Polling was already stopped")
 
+/** @param timeout timeout in ms */
+class TimeoutException(timeout: Long) : Exception("Timed out waiting for $timeout ms")
+
 class NetworkError(message: String) : TelegramAPIException(message)
 
 class RestartingTelegram : TelegramAPIException("The Telegram Bot API service is restarting. Wait few second.")

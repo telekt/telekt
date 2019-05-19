@@ -16,6 +16,7 @@ import io.ktor.http.*
 import io.ktor.http.content.TextContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.io.streams.asInput
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -58,9 +59,10 @@ import java.nio.file.Path
 //<editor-fold desc="network">
 internal class TelegramClient(
     client: HttpClient? = null,
-    private val api: Api = DefaultApi
+    private val api: Api = DefaultApi,
+    private val defaultTimeout: Long
 ) {
-    private val client = client ?: HttpClient(Apache)
+    private val client = client ?: HttpClient(Apache) { engine { socketTimeout = 0 /* workaround for custom timeouts in ktor 1.2.0 */ }}
 
     private val logger = KotlinLogging.logger { }
 
@@ -77,12 +79,13 @@ internal class TelegramClient(
     /**
      * Make request [request] to telegram network, for bot with token [token]
      *
+     * @param timeout timeout (in millis)
      * @return on success telegram answer parsed to [T] is returned
      */
-    suspend fun <T : Any> makeRequest(token: String, request: Request<T>): T = try {
+    suspend fun <T : Any> makeRequest(token: String, request: Request<T>, timeout: Long? = null): T = try {
         logger.debug { "Sending request to telegram api: $request" }
 
-        val response = callTelegram(token, request)
+        val response = callTelegram(token, request, timeout ?: defaultTimeout)
         val result = parseTelegramAnswer(response, request.resultDeserializer)
 
         logger.debug { "Request [$request] was successfully made to telegram api with result=$response" }
@@ -110,10 +113,12 @@ internal class TelegramClient(
     }
 
     //<editor-fold desc="private">
-    private suspend fun <T : Any> callTelegram(token: String, request: Request<T>): String = when (request) {
-        is MultipartRequest<T> -> prepareCall(token, request)
-        is SimpleRequest<T> -> prepareCall(token, request)
-    }.response.readText()
+    private suspend fun <T : Any> callTelegram(token: String, request: Request<T>, timeout: Long): String = withTimeoutOrNull(timeout) { // workaround for custom timeouts in ktor 1.2.0
+        when (request) {
+            is MultipartRequest<T> -> prepareCall(token, request)
+            is SimpleRequest<T> -> prepareCall(token, request)
+        }
+    }?.response?.readText() ?: throw TimeoutException(timeout)
 
     /**
      * Checks answer from telegram on errors.
@@ -183,6 +188,7 @@ internal class TelegramClient(
         return TelegramAPIException("${answer.errorDescription} [${answer.errorCode}]")
     }
 
+
     private suspend fun <R : SimpleRequest<*>> prepareCall(token: String, request: R): HttpClientCall =
         client.tpost(api.url(token, request.method)) {
             body = TextContent(
@@ -197,9 +203,10 @@ internal class TelegramClient(
 
             body = MultiPartFormDataContent(
                 formData {
-                    // TODO: split common multipart request and request for media group, or clear that place with other method....
-                    if (request.attach) request.paramsJson(json).jsonObject.forEach { (key, value) ->
-                        if (key !in request.mediaMap.keys && !value.isNull) {
+                    // I don't understand how it works :\
+                    // TODO: rewrite multipart requests
+                    request.paramsJson(json).jsonObject.forEach { (key, value) ->
+                        if ((request.attach || key !in request.mediaMap.keys) && !value.isNull) {
                             if (value is JsonPrimitive) append(key, value.content)
                             else append(key, value.toString())
                         }
