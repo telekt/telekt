@@ -172,7 +172,7 @@ class DispatcherImpl(
                         // Telegram have no updates for us
                         continue
                     } catch (e: Exception) {
-                        logger.error { "Cause exception while getting updates: $e\n    at ${e.stackTrace.joinToString(separator = "\n    at ")}" }
+                        logger.error(e) { "Cause exception while getting updates:" }
                         delay(15.seconds.inMilliseconds.longValue)
                         continue
                     }
