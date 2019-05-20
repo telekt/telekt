@@ -78,7 +78,7 @@ fun detect(description: String, exceptions: List<Pair<KFunction<TelegramAPIExcep
 
 class TokenValidationException : Exception("Token is invalid!")
 
-class PollingWasAlreadyStopped : Exception("Polling was already stopped")
+class PollingWasAlreadyStopped : IllegalStateException("Polling was already stopped")
 
 /** @param timeout timeout in ms */
 class TimeoutException(timeout: Long) : Exception("Timed out waiting for $timeout ms")
