@@ -4,7 +4,6 @@ import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.fsm.BaseStorage
 import rocks.waffle.telekt.fsm.FSMContext
 import rocks.waffle.telekt.types.*
-import rocks.waffle.telekt.types.Poll
 
 interface TelegramEvent
 
@@ -38,7 +37,7 @@ class UpdateEvent(update: Update, bot: Bot, storage: BaseStorage) : Event<Update
     throw NotImplementedError("UpdateEvent dont implement FSM info")
 })
 
-class MessageEvent(Message: Message, bot: Bot, storage: BaseStorage) : Event<Message>(Message, bot, storage, {
+class MessageEvent(message: Message, bot: Bot, storage: BaseStorage) : Event<Message>(message, bot, storage, {
     FSMInfo(chat.id, from?.id ?: chat.id) // User in chat OR channel state
 })
 
