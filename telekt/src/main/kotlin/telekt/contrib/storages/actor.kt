@@ -26,6 +26,7 @@ class ActorMemoryStorage : CoroutineScope, BaseStorage() {
     val fsmMap = mutableMapOf<Key, State?>()
 
 
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     private val fsmActor = actor<FsmAction> {
         consumeEach { action ->
             when (action) {
@@ -38,19 +39,20 @@ class ActorMemoryStorage : CoroutineScope, BaseStorage() {
         }
     }
 
-
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override suspend fun close() {
         fsmActor.close()
         job.join()
     }
 
-
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override suspend fun getState(chat: Long, user: Long, default: State?): State? {
         val action = FsmAction.GetState(Key(chat, user))
         fsmActor.send(action)
         return action.result.await()
     }
 
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
     override suspend fun setState(chat: Long, user: Long, state: State?) {
         val action = FsmAction.SetState(Key(chat, user), state)
         fsmActor.send(action)
