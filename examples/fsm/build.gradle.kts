@@ -1,5 +1,5 @@
 group = "rocks.waffle.telekt.examples.fsm"
-version = "0.1.0"
+version = "0.1.1"
 
 plugins { application }
 

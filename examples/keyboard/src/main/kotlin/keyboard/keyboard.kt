@@ -4,6 +4,7 @@ package rocks.waffle.telekt.examples.keyboard
  * Example of sending custom keyboards
  */
 
+import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.dispatcher.Dispatcher
 import rocks.waffle.telekt.types.ReplyKeyboardRemove
 import rocks.waffle.telekt.util.Recipient
@@ -12,12 +13,13 @@ import rocks.waffle.telekt.util.handlerregistration.command
 import rocks.waffle.telekt.util.handlerregistration.dispatch
 import rocks.waffle.telekt.util.handlerregistration.handle
 import rocks.waffle.telekt.util.handlerregistration.messages
+import rocks.waffle.telekt.util.replyTo
 
 
 suspend fun main(args: Array<String>) {
     val parsedArgs = args.parse()
-    val dp = Dispatcher(parsedArgs.token)
-    val bot = dp.bot
+    val bot = Bot(parsedArgs.token)
+    val dp = Dispatcher(bot)
 
     dp.dispatch {
         messages {

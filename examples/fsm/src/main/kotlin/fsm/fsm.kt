@@ -1,6 +1,7 @@
 package rocks.waffle.telekt.examples.fsm
 
 
+import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.contrib.storages.ActorMemoryStorage
 import rocks.waffle.telekt.dispatcher.Dispatcher
 import rocks.waffle.telekt.fsm.next
@@ -8,15 +9,17 @@ import rocks.waffle.telekt.types.KeyboardButton
 import rocks.waffle.telekt.types.ReplyKeyboardMarkup
 import rocks.waffle.telekt.types.ReplyKeyboardRemove
 import rocks.waffle.telekt.types.enums.ParseMode
+import rocks.waffle.telekt.util.answerOn
 import rocks.waffle.telekt.util.handlerregistration.*
 import rocks.waffle.telekt.util.markdown.html
+import rocks.waffle.telekt.util.replyTo
 
 
 suspend fun main(args: Array<String>) {
     val parsedArgs = args.parse()
-    val dp = Dispatcher(parsedArgs.token, ActorMemoryStorage())
+    val bot = Bot(parsedArgs.token)
+    val dp = Dispatcher(bot, ActorMemoryStorage())
     val db = DataBase()
-    val bot = dp.bot
 
     dp.dispatch {
         messages {
