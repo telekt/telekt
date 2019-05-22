@@ -1,5 +1,5 @@
 group = "rocks.waffle.telekt"
-version = "0.4.2-SNAPSHOT"
+version = "0.5.0-SNAPSHOT"
 
 val kotlinVersion = "1.3.30"
 val ktorVersion = "1.2.0"
@@ -44,6 +44,8 @@ dependencies {
 
     // Ktor (http work)
     api("io.ktor:ktor-client-core-jvm:$ktorVersion") // ktor HttpClient in libs public api (BotImpl class and Bot factory)
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-html-builder:$ktorVersion")
     implementation("io.ktor:ktor-network-tls:$ktorVersion")

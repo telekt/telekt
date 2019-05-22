@@ -2,13 +2,14 @@ package rocks.waffle.telekt.dispatcher
 
 import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.fsm.BaseStorage
+import rocks.waffle.telekt.fsm.DisabledStorage
 import rocks.waffle.telekt.types.Update
 import rocks.waffle.telekt.types.enums.AllowedUpdate
 import rocks.waffle.telekt.types.events.*
 
 
 @Suppress("FunctionName")
-fun Dispatcher(bot: Bot, storage: BaseStorage? = null): Dispatcher = DispatcherImpl(bot, storage)
+fun Dispatcher(bot: Bot, storage: BaseStorage = DisabledStorage): Dispatcher = KtorDispatcher(bot, storage)
 
 interface Dispatcher {
     //<editor-fold desc="updates">
@@ -46,11 +47,33 @@ interface Dispatcher {
     ): Unit
 
     /**
+     * Start listening for webhook requests on http://{host}:{port}{path}
+     *
+     *  e.g.
+     *  ```kotlin
+     *  val bot = Bot("TOKEN")
+     *  val dp = Dispatcher(bot)
+     *  dp.listen(host = "localhost", port = 8080, path = "/some/path/")
+     *  ```
+     *  will start http server on "http://localhost:8080/some/path/"
+     *
+     *  @throws rocks.waffle.telekt.exceptions.WebhookWasAlreadyStarted if webhook was already started
+     */
+    suspend fun listen(host: String = "localhost", port: Int = 8080, path: String = "/", wait: Boolean = true)
+
+    /**
      * Break long-polling process.
      *
      * @throws rocks.waffle.telekt.exceptions.PollingWasAlreadyStopped if polling was already stopped
      */
     suspend fun stopPolling(): Unit
+
+    /**
+     * Stop the listening for webhook requests
+     *
+     * @throws rocks.waffle.telekt.exceptions.WebhookWasAlreadyStopped if webhook was already stopped
+     */
+    suspend fun stopWebhook(wait: Boolean = true): Unit
     //</editor-fold>
 
     //<editor-fold desc="handler-registration">
@@ -111,5 +134,11 @@ interface Dispatcher {
     ): Unit
     //</editor-fold>
 
+    /**
+     * Closes the dispatcher and waits for all children coroutines (e.g. handlers) to complete.
+     *
+     * WARNING: this method should _NOT_ be called directly from handler because it causes deadlock
+     *   ([close] waits for handler to complete, and handler waits for [close] to complete)
+     */
     suspend fun close(): Unit
 }

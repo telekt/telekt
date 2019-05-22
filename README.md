@@ -263,8 +263,9 @@ Note some things about tg bot api wrapping:
 Things between 'now' and 'release 1.0'
 
 * [ ] Webhooks
-  - [ ] Receiving updates
+  - [X] Receiving updates
   - [ ] Answer into webhook
+  - [ ] Add option to get current webhook state (Running, Stopped, Closed) (?)
 * [ ] Middlewares (like in [aiogram](https://github.com/aiogram/aiogram))
   - [ ] Implement middlewares
   - [ ] Write some built-in middlewares
