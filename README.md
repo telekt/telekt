@@ -78,14 +78,14 @@ After that declaration, we need to register some so-called message handlers. Mes
 Let's define a message handler which handles incoming `/start` and `/help` commands.
 ```kotlin
 dp.messageHandler(CommandFilter("start", "help")) { message: MessageEvent ->
-    message.answer("Howdy, how are you doing?")
+    bot.answerOn(message, "Howdy, how are you doing?")
 }
 ```
 
 Let's add another handler:
 ```kotlin
 dp.messageHandler { message ->
-    message.answer(message.text ?: "this message has no text")
+    bot.answerOn(message, message.text ?: "this message has no text")
 }
 ```
 This one echoes all incoming text messages back to the sender. We doesn't pass any filters, so **all** messages will income here.  
@@ -110,11 +110,11 @@ suspend fun main() {
     val dp = Dispatcher(bot)
 
     dp.messageHandler(CommandFilter("start", "help")) { message: MessageEvent ->
-        message.answer("Hi there 0/")
+        bot.answerOn(message, "Hi there 0/")
     }
 
     dp.messageHandler { message ->
-        message.answer(message.text ?: "this message has no text")
+        bot.answerOn(message, message.text ?: "this message has no text")
     }
 
     dp.poll()
