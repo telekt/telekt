@@ -244,6 +244,7 @@ All examples are located in [examples](examples) directory
 ## Bots using this API
 No one yet, you can become first! 
 Send a telegram message to [@wafflelapkin](https://t.me/wafflelapkin), 
+or send an email to `waffle.lapkin@gmail.com`
 or write in our [group](#the-telegram-chat-groups-and-channel),
 or open an issue on [github](https://github.com/telekt/telekt/issues).
 
