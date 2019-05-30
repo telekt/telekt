@@ -701,9 +701,11 @@ class BotImpl(
     //</editor-fold>
 
     //<editor-fold desc="close">
-    override fun close() {
-        (this as CoroutineScope).cancel()
+    override suspend fun close() {
         network.close()
+        job.complete()
+        me.cancel()
+        job.join()
     }
     //</editor-fold>
 }

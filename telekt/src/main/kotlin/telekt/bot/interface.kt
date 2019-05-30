@@ -1107,5 +1107,5 @@ interface Bot {
 
     //</editor-fold>
 
-    fun close(): Unit
+    suspend fun close(): Unit
 }

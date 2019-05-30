@@ -17,6 +17,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import mu.KotlinLogging
 import rocks.waffle.telekt.bot.Bot
+import rocks.waffle.telekt.exceptions.PollingWasAlreadyStarted
+import rocks.waffle.telekt.exceptions.PollingWasAlreadyStopped
 import rocks.waffle.telekt.exceptions.WebhookWasAlreadyStarted
 import rocks.waffle.telekt.exceptions.WebhookWasAlreadyStopped
 import rocks.waffle.telekt.fsm.BaseStorage
@@ -169,52 +171,167 @@ class KtorDispatcher(
     }
 
     //<editor-fold desc="long polling">
-    override var isPolling: Boolean = false
-        private set
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
+    override suspend fun poll(
+        relax: Float,
+        resetWebhook: Boolean?,
+        timeout: Int,
+        limit: Byte?,
+        allowedUpdates: List<AllowedUpdate>?,
+        wait: Boolean
+    ): Unit = polling.start(relax, resetWebhook, timeout, limit, allowedUpdates, wait)
 
-    override suspend fun poll(relax: Float, resetWebhook: Boolean?, timeout: Int, limit: Byte?, allowedUpdates: List<AllowedUpdate>?) =
-        coroutineScope {
-            if (isPolling) throw RuntimeException("Polling already started")
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
+    override suspend fun stopPolling(wait: Boolean): Unit = polling.stop(wait)
 
-            logger.info("Start polling")
 
-            isPolling = true
+    private sealed class PollingSignal {
+        data class Start(
+            val relax: Float,
+            val resetWebhook: Boolean?,
+            val timeout: Int,
+            val limit: Byte?,
+            val allowedUpdates: List<AllowedUpdate>?,
+            val exception: CompletableDeferred<Exception?>,
+            val stopCallback: CompletableDeferred<Unit>
+        ) : PollingSignal()
+
+        data class Stop(
+            val exception: CompletableDeferred<Exception?>,
+            val operationEndCallback: CompletableDeferred<Unit>
+        ) : PollingSignal()
+
+        data class Close(
+            val operationEndCallback: CompletableDeferred<Unit>
+        ) : PollingSignal()
+    }
+
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
+    private inner class Polling {
+        private val pollingControlActor = scope.actor<PollingSignal>(onCompletion = { println("actor complete!") }) {
+            var stopCallback: CompletableDeferred<Unit>? = null
+            var job: Job? = null
+
+            loop@ for (signal in channel) when (signal) {
+
+                // Start the http server
+                is PollingSignal.Start -> {
+                    if (job != null) {
+                        signal.exception.complete(PollingWasAlreadyStarted)
+                        // actually, polling doesn't stop, but we return exception, so it's OK
+                        signal.stopCallback.complete(Unit)
+                    } else {
+                        signal.exception.complete(null)
+                        stopCallback = signal.stopCallback
+
+                        job = getPollingJob(signal.relax, signal.resetWebhook, signal.timeout, signal.limit, signal.allowedUpdates)
+                        logger.info("Start polling")
+                    }
+                }
+
+                // Stop the long polling
+                is PollingSignal.Stop -> {
+                    if (job == null) {
+                        val (exception, end) = signal
+                        exception.complete(PollingWasAlreadyStopped)
+                        end.complete(Unit)
+                    } else {
+                        val (exception, end) = signal
+                        exception.complete(null)
+                        job.cancelAndJoin()
+                        logger.warn("Stop polling")
+                        stopCallback?.complete(Unit)
+                        end.complete(Unit)
+                    }
+                }
+
+                // Stop long polling, close actor & end work
+                // Should be called ONLY from `KtorDispatcher.close()`
+                is PollingSignal.Close -> {
+                    val (end) = signal
+                    job?.cancelAndJoin()
+                    logger.warn("Stop polling")
+                    stopCallback?.complete(Unit)
+                    this@actor.channel.close()
+                    end.complete(Unit)
+                    break@loop
+                }
+            }
+        }
+
+        fun CoroutineScope.getPollingJob(
+            relax: Float,
+            resetWebhook: Boolean?,
+            timeout: Int,
+            limit: Byte?,
+            allowedUpdates: List<AllowedUpdate>?
+        ): Job = launch {
             var offset: Int? = null
 
-            try {
-                while (isPolling) {
-                    var updates: List<Update>?
-                    try {
-                        updates = bot.getUpdates(offset = offset, limit = limit, timeout = timeout, allowedUpdates = allowedUpdates)
-                    } catch (e: java.net.SocketTimeoutException) {
-                        // Telegram have no updates for us
-                        continue
+            withContext(NonCancellable) {
+                while (this@launch.isActive) {
+                    val updates = try {
+                        bot.getUpdates(offset = offset, limit = limit, timeout = timeout, allowedUpdates = allowedUpdates)
                     } catch (e: Exception) {
                         logger.error(e) { "Cause exception while getting updates:" }
                         delay(15.seconds.inMilliseconds.longValue)
                         continue
                     }
+
                     if (updates.isNotEmpty()) {
-                        logger.debug("Received ${updates.size} updates.")
+                        logger.debug { "Received ${updates.size} updates" }
                         offset = updates.last().updateId + 1
 
-                        launch { processUpdates(updates) }
+                        scope.launch {
+                            processUpdates(updates)
+                        }
                     }
 
                     if (relax > 0) delay(relax.seconds.inMilliseconds.longValue)
                 }
-            } finally {
-                logger.warn("Polling is stopped.")
             }
         }
 
-    /** Break long-polling process. */
-    override suspend fun stopPolling() {
-        if (isPolling) {
-            logger.info("Stop polling...")
-            isPolling = false
+        suspend fun start(relax: Float, resetWebhook: Boolean?, timeout: Int, limit: Byte?, allowedUpdates: List<AllowedUpdate>?, wait: Boolean) {
+            val exception = CompletableDeferred<Exception?>()
+            val end = CompletableDeferred<Unit>()
+
+            // send signal for polling starting
+            pollingControlActor.send(
+                PollingSignal.Start(relax, resetWebhook, timeout, limit, allowedUpdates, exception, end)
+            )
+
+            // throw exception if something go wrong
+            exception.await()?.let { throw it }
+
+            // wait for the polling to stop
+            if (wait) end.await()
+        }
+
+        suspend fun stop(wait: Boolean) {
+            val exception = CompletableDeferred<Exception?>()
+            val end = CompletableDeferred<Unit>()
+
+            // send signal for the polling to stop
+            pollingControlActor.send(PollingSignal.Stop(exception, end))
+
+            // throw exception if something go wrong
+            exception.await()?.let { throw it }
+
+            // wait for operation to end
+            if (wait) end.await()
+        }
+
+        suspend fun close() {
+            val closeEnd = CompletableDeferred<Unit>()
+            pollingControlActor.send(PollingSignal.Close(closeEnd))
+            closeEnd.await()
         }
     }
+
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
+    private val polling by lazy { Polling() }
+
     //</editor-fold>
 
     //<editor-fold desc="webhook">
@@ -351,13 +468,15 @@ class KtorDispatcher(
     //</editor-fold>
 
     @kotlinx.coroutines.ObsoleteCoroutinesApi
-    override suspend fun close() = coroutineScope<Unit> {
-        launch { stopPolling() }
-        launch { webhook.close() }
-        launch { bot.close() }
-        launch {
-            job.complete()
-            job.join()
+    override suspend fun close() {
+        coroutineScope {
+            launch { polling.close() }
+            launch { webhook.close() }
+            launch {
+                job.complete()
+                job.join()
+            }
         }
+        bot.close()
     }
 }

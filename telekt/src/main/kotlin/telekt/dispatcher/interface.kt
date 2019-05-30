@@ -22,19 +22,17 @@ interface Dispatcher {
     /**
      * Process incoming updates.
      * This function should be used **only** for debug purposes.
-     *
      */
     suspend fun processUpdates(updates: List<Update>): Unit
     //</editor-fold>
 
     //<editor-fold desc="polling">
-    val isPolling: Boolean
-
     /**
      * Start long-polling
      *
      * @param relax time in seconds to relax between getUpdates requests
      * @param resetWebhook for now, just a place holder
+     * @param wait if true [poll] will wait for polling to complete else it will return immediately
      *
      * params [timeout], [limit] and [allowedUpdates] passes to getUpdates method.
      */
@@ -43,9 +41,19 @@ interface Dispatcher {
         resetWebhook: Boolean? = null,
         timeout: Int = 20,
         limit: Byte? = null,
-        allowedUpdates: List<AllowedUpdate>? = null
+        allowedUpdates: List<AllowedUpdate>? = null,
+        wait: Boolean = true
     ): Unit
 
+    /**
+     * Break long-polling process.
+     *
+     * @throws rocks.waffle.telekt.exceptions.PollingWasAlreadyStopped if polling was already stopped
+     */
+    suspend fun stopPolling(wait: Boolean = true): Unit
+    //</editor-fold>
+
+    //<editor-fold desc="webhook">
     /**
      * Start listening for webhook requests on http://{host}:{port}{path}
      *
@@ -57,16 +65,11 @@ interface Dispatcher {
      *  ```
      *  will start http server on "http://localhost:8080/some/path/"
      *
-     *  @throws rocks.waffle.telekt.exceptions.WebhookWasAlreadyStarted if webhook was already started
+     * @param wait if true [listen] will wait for webhook to complete else it will return immediately
+     *
+     * @throws rocks.waffle.telekt.exceptions.WebhookWasAlreadyStarted if webhook was already started
      */
     suspend fun listen(host: String = "localhost", port: Int = 8080, path: String = "/", wait: Boolean = true)
-
-    /**
-     * Break long-polling process.
-     *
-     * @throws rocks.waffle.telekt.exceptions.PollingWasAlreadyStopped if polling was already stopped
-     */
-    suspend fun stopPolling(): Unit
 
     /**
      * Stop the listening for webhook requests
