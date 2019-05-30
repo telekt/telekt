@@ -113,12 +113,12 @@ internal class TelegramClient(
     }
 
     //<editor-fold desc="private">
-    private suspend fun <T : Any> callTelegram(token: String, request: Request<T>, timeout: Long): String = withTimeoutOrNull(timeout) { // workaround for custom timeouts in ktor 1.2.0
+    private suspend fun <T : Any> callTelegram(token: String, request: Request<T>, timeout: Long): String = (withTimeoutOrNull(timeout) { // workaround for custom timeouts in ktor 1.2.0
         when (request) {
             is MultipartRequest<T> -> prepareCall(token, request)
             is SimpleRequest<T> -> prepareCall(token, request)
         }
-    }?.response?.readText() ?: throw TimeoutException(timeout)
+    } ?: throw TimeoutException(timeout)).response.use { it.readText() }
 
     /**
      * Checks answer from telegram on errors.
