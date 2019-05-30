@@ -41,8 +41,6 @@ class KtorDispatcher(
 
     private val logger = KotlinLogging.logger {}
 
-    private var lastUpdateId: Int = 0
-
     //<editor-fold desc="handlers">
     private val messageHandlers: Handlers<Message> = Handlers()
     private val editedMessageHandlers: Handlers<Message> = Handlers()
@@ -138,8 +136,6 @@ class KtorDispatcher(
 
     /** Process single update object */
     private suspend fun processUpdate(update: Update) {
-        lastUpdateId = update.updateId
-
         suspend fun <T : TelegramEvent> Handlers<T>.notify_(t: T, getFSMInfo: T.() -> Pair<Long, Long>) {
             notify(HandlerScope(bot, HandlerContext()) {
                 val (chat, user) = t.getFSMInfo()
