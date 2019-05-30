@@ -23,9 +23,9 @@ import rocks.waffle.telekt.exceptions.WebhookWasAlreadyStarted
 import rocks.waffle.telekt.exceptions.WebhookWasAlreadyStopped
 import rocks.waffle.telekt.fsm.BaseStorage
 import rocks.waffle.telekt.fsm.DisabledStorage
-import rocks.waffle.telekt.types.Update
+import rocks.waffle.telekt.fsm.FSMContext
+import rocks.waffle.telekt.types.*
 import rocks.waffle.telekt.types.enums.AllowedUpdate
-import rocks.waffle.telekt.types.events.*
 import java.util.concurrent.TimeUnit
 
 
@@ -43,95 +43,87 @@ class KtorDispatcher(
 
     private var lastUpdateId: Int = 0
 
-    private val updateHandlers: Handlers<UpdateEvent> by lazy {
-        val handlers = Handlers<UpdateEvent>()
-        handlers.register(name = "INTERNAL_UPDATE_HANDLER") {
-            processUpdate(it.update)
-        }
-        handlers
-    }
-
     //<editor-fold desc="handlers">
-    private val messageHandlers: Handlers<MessageEvent> = Handlers()
-    private val editedMessageHandlers: Handlers<EditedMessageEvent> = Handlers()
-    private val channelPostHandlers: Handlers<ChannelPostEvent> = Handlers()
-    private val editedChannelPostHandlers: Handlers<EditedChannelPostEvent> = Handlers()
-    private val inlineQueryHandlers: Handlers<InlineQueryEvent> = Handlers()
-    private val chosenInlineResultHandlers: Handlers<ChosenInlineResultEvent> = Handlers()
-    private val callbackQueryHandlers: Handlers<CallbackQueryEvent> = Handlers()
-    private val shippingQueryHandlers: Handlers<ShippingQueryEvent> = Handlers()
-    private val preCheckoutQueryHandlers: Handlers<PreCheckoutQueryEvent> = Handlers()
-    private val pollHandlers: Handlers<PollEvent> = Handlers()
+    private val messageHandlers: Handlers<Message> = Handlers()
+    private val editedMessageHandlers: Handlers<Message> = Handlers()
+    private val channelPostHandlers: Handlers<Message> = Handlers()
+    private val editedChannelPostHandlers: Handlers<Message> = Handlers()
+    private val inlineQueryHandlers: Handlers<InlineQuery> = Handlers()
+    private val chosenInlineResultHandlers: Handlers<ChosenInlineResult> = Handlers()
+    private val callbackQueryHandlers: Handlers<CallbackQuery> = Handlers()
+    private val shippingQueryHandlers: Handlers<ShippingQuery> = Handlers()
+    private val preCheckoutQueryHandlers: Handlers<PreCheckoutQuery> = Handlers()
+    private val pollHandlers: Handlers<Poll> = Handlers()
     //</editor-fold>
 
     //<editor-fold desc="handlers-registration">
     override fun messageHandler(
-        vararg filters: Filter<MessageEvent>,
+        vararg filters: Filter<Message>,
         name: String?,
-        block: suspend (MessageEvent) -> Unit
+        block: suspend HandlerScope.(Message) -> Unit
     ): Unit =
         messageHandlers.register(*filters, handler = block, name = name)
 
     override fun editedMessageHandler(
-        vararg filters: Filter<EditedMessageEvent>,
+        vararg filters: Filter<Message>,
         name: String?,
-        block: suspend (EditedMessageEvent) -> Unit
+        block: suspend HandlerScope.(Message) -> Unit
     ): Unit =
         editedMessageHandlers.register(*filters, handler = block, name = name)
 
     override fun channelPostHandler(
-        vararg filters: Filter<ChannelPostEvent>,
+        vararg filters: Filter<Message>,
         name: String?,
-        block: suspend (ChannelPostEvent) -> Unit
+        block: suspend HandlerScope.(Message) -> Unit
     ): Unit =
         channelPostHandlers.register(*filters, handler = block, name = name)
 
     override fun editedChannelPostHandler(
-        vararg filters: Filter<EditedChannelPostEvent>,
+        vararg filters: Filter<Message>,
         name: String?,
-        block: suspend (EditedChannelPostEvent) -> Unit
+        block: suspend HandlerScope.(Message) -> Unit
     ): Unit =
         editedChannelPostHandlers.register(*filters, handler = block, name = name)
 
     override fun inlineQueryHandler(
-        vararg filters: Filter<InlineQueryEvent>,
+        vararg filters: Filter<InlineQuery>,
         name: String?,
-        block: suspend (InlineQueryEvent) -> Unit
+        block: suspend HandlerScope.(InlineQuery) -> Unit
     ): Unit =
         inlineQueryHandlers.register(*filters, handler = block, name = name)
 
     override fun chosenInlineResultHandler(
-        vararg filters: Filter<ChosenInlineResultEvent>,
+        vararg filters: Filter<ChosenInlineResult>,
         name: String?,
-        block: suspend (ChosenInlineResultEvent) -> Unit
+        block: suspend HandlerScope.(ChosenInlineResult) -> Unit
     ): Unit =
         chosenInlineResultHandlers.register(*filters, handler = block, name = name)
 
     override fun callbackQueryHandler(
-        vararg filters: Filter<CallbackQueryEvent>,
+        vararg filters: Filter<CallbackQuery>,
         name: String?,
-        block: suspend (CallbackQueryEvent) -> Unit
+        block: suspend HandlerScope.(CallbackQuery) -> Unit
     ): Unit =
         callbackQueryHandlers.register(*filters, handler = block, name = name)
 
     override fun shippingQueryHandler(
-        vararg filters: Filter<ShippingQueryEvent>,
+        vararg filters: Filter<ShippingQuery>,
         name: String?,
-        block: suspend (ShippingQueryEvent) -> Unit
+        block: suspend HandlerScope.(ShippingQuery) -> Unit
     ): Unit =
         shippingQueryHandlers.register(*filters, handler = block, name = name)
 
     override fun preCheckoutQueryHandler(
-        vararg filters: Filter<PreCheckoutQueryEvent>,
+        vararg filters: Filter<PreCheckoutQuery>,
         name: String?,
-        block: suspend (PreCheckoutQueryEvent) -> Unit
+        block: suspend HandlerScope.(PreCheckoutQuery) -> Unit
     ): Unit =
         preCheckoutQueryHandlers.register(*filters, handler = block, name = name)
 
     override fun pollHandler(
-        vararg filters: Filter<PollEvent>,
+        vararg filters: Filter<Poll>,
         name: String?,
-        block: suspend (PollEvent) -> Unit): Unit =
+        block: suspend HandlerScope.(Poll) -> Unit): Unit =
         pollHandlers.register(*filters, handler = block, name = name)
     //</editor-fold>
 
@@ -141,31 +133,32 @@ class KtorDispatcher(
     }
 
     override suspend fun processUpdates(updates: List<Update>) = coroutineScope {
-        for (update in updates) {
-            launch {
-                updateHandlers.notify(
-                    UpdateEvent(update, bot, storage)
-                )
-            }
-        }
+        for (update in updates) launch { processUpdate(update) }
     }
 
     /** Process single update object */
     private suspend fun processUpdate(update: Update) {
         lastUpdateId = update.updateId
 
+        suspend fun <T : TelegramEvent> Handlers<T>.notify_(t: T, getFSMInfo: T.() -> Pair<Long, Long>) {
+            notify(HandlerScope(bot, HandlerContext()) {
+                val (chat, user) = t.getFSMInfo()
+                FSMContext(storage, chat, user)
+            }, t)
+        }
+
         update.run {
             when {
-                message != null -> messageHandlers.notify(MessageEvent(message, bot, storage))
-                editedMessage != null -> editedMessageHandlers.notify(EditedMessageEvent(editedMessage, bot, storage))
-                channelPost != null -> channelPostHandlers.notify(ChannelPostEvent(channelPost, bot, storage))
-                editedChannelPost != null -> editedChannelPostHandlers.notify(EditedChannelPostEvent(editedChannelPost, bot, storage))
-                inlineQuery != null -> inlineQueryHandlers.notify(InlineQueryEvent(inlineQuery, bot, storage))
-                chosenInlineResult != null -> chosenInlineResultHandlers.notify(ChosenInlineResultEvent(chosenInlineResult, bot, storage))
-                callbackQuery != null -> callbackQueryHandlers.notify(CallbackQueryEvent(callbackQuery, bot, storage))
-                shippingQuery != null -> shippingQueryHandlers.notify(ShippingQueryEvent(shippingQuery, bot, storage))
-                preCheckoutQuery != null -> preCheckoutQueryHandlers.notify(PreCheckoutQueryEvent(preCheckoutQuery, bot, storage))
-                poll != null -> pollHandlers.notify(PollEvent(poll, bot, storage))
+                message != null -> messageHandlers.notify_(message) { chat.id to (from?.id ?: chat.id) /* User in chat OR channel state */}
+                editedMessage != null -> editedMessageHandlers.notify_(editedMessage) { chat.id to (from?.id ?: chat.id) /* User in chat OR channel state */}
+                channelPost != null -> channelPostHandlers.notify_(channelPost) { chat.id to (from?.id ?: chat.id) /* User in chat OR channel state */}
+                editedChannelPost != null -> editedChannelPostHandlers.notify_(editedChannelPost) { chat.id to (from?.id ?: chat.id) /* User in chat OR channel state */}
+                inlineQuery != null -> inlineQueryHandlers.notify_(inlineQuery) { from.id to from.id /* DM */}
+                chosenInlineResult != null -> chosenInlineResultHandlers.notify_(chosenInlineResult) { from.id to from.id /* DM */}
+                callbackQuery != null -> callbackQueryHandlers.notify_(callbackQuery) { from.id to from.id /* DM */}
+                shippingQuery != null -> shippingQueryHandlers.notify_(shippingQuery) { from.id to from.id /* DM */}
+                preCheckoutQuery != null -> preCheckoutQueryHandlers.notify_(preCheckoutQuery) { from.id to from.id /* DM */}
+                poll != null -> pollHandlers.notify_(poll) { throw NotImplementedError("PollEvent dont implement FSM info") } // TODO: it isn't clean way :|
             }
         }
     }
@@ -412,7 +405,7 @@ class KtorDispatcher(
                     post(path) {
                         val text = call.receiveText()
                         val update = json.parse(Update.serializer(), text)
-                        scope.launch { updateHandlers.notify(UpdateEvent(update, bot, storage)) }
+                        scope.launch { processUpdate(update) }
                         call.respond(HttpStatusCode.OK, "OK")
                     }
                 }

@@ -5,7 +5,10 @@ import com.github.ajalt.clikt.parameters.arguments.argument
 import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.dispatcher.Dispatcher
 import rocks.waffle.telekt.util.answerOn
-import rocks.waffle.telekt.util.handlerregistration.*
+import rocks.waffle.telekt.util.handlerregistration.command
+import rocks.waffle.telekt.util.handlerregistration.dispatch
+import rocks.waffle.telekt.util.handlerregistration.handle
+import rocks.waffle.telekt.util.handlerregistration.messages
 
 
 suspend fun main(args: Array<String>) {
@@ -16,11 +19,11 @@ suspend fun main(args: Array<String>) {
 
     dp.dispatch {
         messages {
-            handle(command("start", "help")) { (message) ->
+            handle(command("start", "help")) { message ->
                 bot.answerOn(message, "Hi there 0/")
             }
 
-            handle { (message) ->
+            handle { message ->
                 bot.answerOn(message, message.text ?: "this message has no text")
             }
         }

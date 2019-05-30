@@ -2,7 +2,6 @@ package rocks.waffle.telekt.types
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import rocks.waffle.telekt.types.events.TelegramEvent
 
 /** This object represents an incoming update. At most one of the optional parameters can be present in any given update. */
 @Serializable data class Update(
@@ -17,4 +16,4 @@ import rocks.waffle.telekt.types.events.TelegramEvent
     @SerialName("shipping_query") val shippingQuery: ShippingQuery? = null,
     @SerialName("pre_checkout_query") val preCheckoutQuery: PreCheckoutQuery? = null,
     val poll: Poll? = null
-) : TelegramEvent
+)

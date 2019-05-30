@@ -12,7 +12,6 @@ import rocks.waffle.telekt.network.InputFile
 import rocks.waffle.telekt.types.Message
 import rocks.waffle.telekt.types.enums.ContentType
 import rocks.waffle.telekt.types.enums.ParseMode
-import rocks.waffle.telekt.types.events.Event
 import rocks.waffle.telekt.util.Recipient
 import rocks.waffle.telekt.util.handlerregistration.*
 import rocks.waffle.telekt.util.markdown.hcode
@@ -29,7 +28,7 @@ suspend fun main(args: Array<String>) {
 
     dp.dispatch {
         messages {
-            handle(command("url")) { (message) ->
+            handle(command("url")) { message ->
                 // Sending file by URL
                 val url = "https://cdn.discordapp.com/attachments/536882422848159784/556265112789581834/download.jpeg"
                 bot.sendPhoto(
@@ -39,7 +38,7 @@ suspend fun main(args: Array<String>) {
                 )
             }
 
-            handle(command("file")) { (message) ->
+            handle(command("file")) { message ->
                 // Sending files from disk
                 val file = getCatFile()
                 bot.sendPhoto(
@@ -49,7 +48,7 @@ suspend fun main(args: Array<String>) {
                 )
             }
 
-            handle(photo, text("fileId")) { (message) ->
+            handle(photo, text("fileId")) { message ->
                 // Sending file by [fileId]
                 // First file id is the smallest one, and last - largest one (original)
                 val fileId = message.photo!!.last().fileId
@@ -60,7 +59,7 @@ suspend fun main(args: Array<String>) {
                 )
             }
 
-            handle(photo, text("download")) { (message) ->
+            handle(photo, text("download")) { message ->
                 val path = System.getProperty("user.home") + "/photo.jpg"
                 val fileId = message.photo!!.last().fileId
                 // Download file
@@ -92,6 +91,4 @@ class R
 
 fun getCatFile(): File = File(R::class.java.classLoader.getResource("cat.jpg").file)
 
-val <E> HandlerDSL<E>.photo: ContentTypeFilter<E>
-        where E : Event<Message>
-    get() = ContentTypeFilter(ContentType.PHOTO)
+val @Suppress("UNUSED") HandlerDSL<Message>.photo: ContentTypeFilter get() = ContentTypeFilter(ContentType.PHOTO)

@@ -4,7 +4,6 @@ import com.github.ajalt.clikt.core.NoRunCliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.dispatcher.Dispatcher
-import rocks.waffle.telekt.types.events.message
 import rocks.waffle.telekt.util.InlineKeyboardMarkup
 import rocks.waffle.telekt.util.answerOn
 import rocks.waffle.telekt.util.handlerregistration.*
@@ -20,7 +19,7 @@ suspend fun main(args: Array<String>) {
     dp.dispatch {
         messages {
             handle(command("start")) {
-                bot.answerOn(it, it.message.text!!)
+                bot.answerOn(it, it.text!!)
             }
 
             handle {
@@ -46,22 +45,22 @@ suspend fun main(args: Array<String>) {
              */
 
             // text filter can be also used to check call back data
-            handle(text("none")) { (call) ->
+            handle(text("none")) { call ->
                 // You need to always answer callback query to hide 'clock' on client's side
                 bot.answerCallbackQuery(call.id)
             }
 
-            handle(text("text")) { (call) ->
+            handle(text("text")) { call ->
                 // will show text on the top of the screen
                 bot.answerCallbackQuery(call.id, text = "hello there!")
             }
 
-            handle(text("alert")) { (call) ->
+            handle(text("alert")) { call ->
                 // will show alert
                 bot.answerCallbackQuery(call.id, text = "hello, alert!", showAlert = true)
             }
 
-            handle(text("url")) { (call) ->
+            handle(text("url")) { call ->
                 // you can pass there game url (see: https://core.telegram.org/bots/api#answercallbackquery)
                 //
                 // Or link to your bot with start parameter

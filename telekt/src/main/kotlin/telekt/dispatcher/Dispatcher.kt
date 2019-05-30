@@ -3,9 +3,8 @@ package rocks.waffle.telekt.dispatcher
 import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.fsm.BaseStorage
 import rocks.waffle.telekt.fsm.DisabledStorage
-import rocks.waffle.telekt.types.Update
+import rocks.waffle.telekt.types.*
 import rocks.waffle.telekt.types.enums.AllowedUpdate
-import rocks.waffle.telekt.types.events.*
 
 
 @Suppress("FunctionName")
@@ -80,60 +79,60 @@ interface Dispatcher {
     //</editor-fold>
 
     //<editor-fold desc="handler-registration">
-    fun messageHandler(vararg filters: Filter<MessageEvent>, name: String? = null, block: suspend (MessageEvent) -> Unit): Unit
+    fun messageHandler(vararg filters: Filter<Message>, name: String? = null, block: suspend HandlerScope.(Message) -> Unit): Unit
 
     fun editedMessageHandler(
-        vararg filters: Filter<EditedMessageEvent>,
+        vararg filters: Filter<Message>,
         name: String? = null,
-        block: suspend (EditedMessageEvent) -> Unit
+        block: suspend HandlerScope.(Message) -> Unit
     ): Unit
 
     fun channelPostHandler(
-        vararg filters: Filter<ChannelPostEvent>,
+        vararg filters: Filter<Message>,
         name: String? = null,
-        block: suspend (ChannelPostEvent) -> Unit
+        block: suspend HandlerScope.(Message) -> Unit
     ): Unit
 
     fun editedChannelPostHandler(
-        vararg filters: Filter<EditedChannelPostEvent>,
+        vararg filters: Filter<Message>,
         name: String? = null,
-        block: suspend (EditedChannelPostEvent) -> Unit
+        block: suspend HandlerScope.(Message) -> Unit
     ): Unit
 
     fun inlineQueryHandler(
-        vararg filters: Filter<InlineQueryEvent>,
+        vararg filters: Filter<InlineQuery>,
         name: String? = null,
-        block: suspend (InlineQueryEvent) -> Unit
+        block: suspend HandlerScope.(InlineQuery) -> Unit
     ): Unit
 
     fun chosenInlineResultHandler(
-        vararg filters: Filter<ChosenInlineResultEvent>,
+        vararg filters: Filter<ChosenInlineResult>,
         name: String? = null,
-        block: suspend (ChosenInlineResultEvent) -> Unit
+        block: suspend HandlerScope.(ChosenInlineResult) -> Unit
     ): Unit
 
     fun callbackQueryHandler(
-        vararg filters: Filter<CallbackQueryEvent>,
+        vararg filters: Filter<CallbackQuery>,
         name: String? = null,
-        block: suspend (CallbackQueryEvent) -> Unit
+        block: suspend HandlerScope.(CallbackQuery) -> Unit
     ): Unit
 
     fun shippingQueryHandler(
-        vararg filters: Filter<ShippingQueryEvent>,
+        vararg filters: Filter<ShippingQuery>,
         name: String? = null,
-        block: suspend (ShippingQueryEvent) -> Unit
+        block: suspend HandlerScope.(ShippingQuery) -> Unit
     ): Unit
 
     fun preCheckoutQueryHandler(
-        vararg filters: Filter<PreCheckoutQueryEvent>,
+        vararg filters: Filter<PreCheckoutQuery>,
         name: String? = null,
-        block: suspend (PreCheckoutQueryEvent) -> Unit
+        block: suspend HandlerScope.(PreCheckoutQuery) -> Unit
     ): Unit
 
     fun pollHandler(
-        vararg filters: Filter<PollEvent>,
+        vararg filters: Filter<Poll>,
         name: String? = null,
-        block: suspend (PollEvent) -> Unit
+        block: suspend HandlerScope.(Poll) -> Unit
     ): Unit
     //</editor-fold>
 

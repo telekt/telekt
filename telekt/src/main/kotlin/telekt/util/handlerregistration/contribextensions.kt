@@ -1,23 +1,19 @@
 package rocks.waffle.telekt.util.handlerregistration
 
 import rocks.waffle.telekt.contrib.filters.*
+import rocks.waffle.telekt.dispatcher.TelegramEvent
 import rocks.waffle.telekt.fsm.State
-import rocks.waffle.telekt.types.CallbackQuery
-import rocks.waffle.telekt.types.ChosenInlineResult
-import rocks.waffle.telekt.types.Poll
-import rocks.waffle.telekt.types.InlineQuery
-import rocks.waffle.telekt.types.Message
+import rocks.waffle.telekt.types.*
 import rocks.waffle.telekt.types.enums.ContentType
-import rocks.waffle.telekt.types.events.Event
 
 
-fun <E> @Suppress("unused") HandlerDSL<E>.command(
+fun @Suppress("unused") HandlerDSL<Message>.command(
     command: String,
     vararg commands: String,
     prefixes: Array<Char> = arrayOf('/'),
     ignoreCase: Boolean = false,
     ignoreMention: Boolean = false
-): CommandFilter<E> where E : Event<Message> = CommandFilter(
+): CommandFilter = CommandFilter(
     command,
     *commands,
     prefixes = prefixes,
@@ -26,15 +22,13 @@ fun <E> @Suppress("unused") HandlerDSL<E>.command(
 )
 
 
-fun <E> @Suppress("unused") HandlerDSL<E>.state(state: State?): StateFilter<E> where E : Event<*> =
-    StateFilter(state)
+fun <T : TelegramEvent> @Suppress("unused") HandlerDSL<T>.state(state: State?): StateFilter<T> = StateFilter(state)
 
 
-fun <E> @Suppress("unused") HandlerDSL<E>.contentTypes(
+fun @Suppress("unused") HandlerDSL<Message>.contentTypes(
     contentType: ContentType,
     vararg contentTypes: ContentType
-): ContentTypeFilter<E> where E : Event<Message> =
-    ContentTypeFilter(contentType, *contentTypes)
+): ContentTypeFilter = ContentTypeFilter(contentType, *contentTypes)
 
 
 /**
@@ -56,5 +50,4 @@ fun <E> @Suppress("unused") HandlerDSL<E>.contentTypes(
  * │        [Poll]         │ [Poll.question]                     │
  * └───────────────────────┴─────────────────────────────────────┘
  */
-fun <E> @Suppress("unused") HandlerDSL<E>.text(text: String?): TextFilter<E> where E : Event<out TextableTelegramEvent> =
-    TextFilter(text)
+fun <T : TextableTelegramEvent> @Suppress("unused") HandlerDSL<T>.text(text: String?): TextFilter<T> = TextFilter(text)

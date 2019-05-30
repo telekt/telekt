@@ -1,28 +1,33 @@
 package rocks.waffle.telekt.util
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import rocks.waffle.telekt.dispatcher.Filter
-import rocks.waffle.telekt.types.events.Event
+import rocks.waffle.telekt.dispatcher.HandlerScope
+import rocks.waffle.telekt.dispatcher.TelegramEvent
 
-class NotFilter<E>(private val filter: Filter<E>) : Filter<E>() where E : Event<*> {
-    override suspend fun test(value: E): Boolean = !filter.test(value)
+
+class NotFilter<T : TelegramEvent>(private val filter: Filter<T>) : Filter<T>() {
+    override suspend fun test(scope: HandlerScope, value: T): Boolean = !filter.test(scope, value)
 }
 
-operator fun <E> Filter<E>.not(): Filter<E> where E : Event<*> = NotFilter(this)
+operator fun <T : TelegramEvent> Filter<T>.not(): Filter<T> = NotFilter(this)
 
 
-class OrFilter<E>(private val first: Filter<E>, private val second: Filter<E>) : Filter<E>() where E : Event<*> {
-    override suspend fun test(value: E): Boolean = coroutineScope {
+class OrFilter<T : TelegramEvent>(private val first: Filter<T>, private val second: Filter<T>) : Filter<T>() {
+    override suspend fun test(scope: HandlerScope, value: T): Boolean = coroutineScope {
         val ch = Channel<Boolean>()
 
         launch {
             val jobs = listOf(
                 launch {
-                    ch.send(first.test(value))
+                    ch.send(first.test(scope, value))
                 },
                 launch {
-                    ch.send(second.test(value))
+                    ch.send(second.test(scope, value))
                 }
             )
 
@@ -40,4 +45,4 @@ class OrFilter<E>(private val first: Filter<E>, private val second: Filter<E>) :
     }
 }
 
-infix fun <E> Filter<E>.or(other: Filter<E>): Filter<E> where E : Event<*> = OrFilter(this, other)
+infix fun <T : TelegramEvent> Filter<T>.or(other: Filter<T>): Filter<T> = OrFilter(this, other)

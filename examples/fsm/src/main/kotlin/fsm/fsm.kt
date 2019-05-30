@@ -23,35 +23,35 @@ suspend fun main(args: Array<String>) {
 
     dp.dispatch {
         messages {
-            handle(command("start")) { (message, ctx) ->
+            handle(command("start")) { message ->
                 // set state
-                ctx.setState(States.NAME)
+                fsmContext.setState(States.NAME)
 
                 bot.replyTo(message, "Hi there! What's your name?")
             }
 
-            handle(command("canceled")) { (message, ctx) ->
+            handle(command("canceled")) { message ->
                 // Cancel state and inform user about it
-                ctx.finish()
+                fsmContext.finish()
                 // And remove keyboard (just in case)
                 bot.replyTo(message, "Cenceled.", replyMarkup = ReplyKeyboardRemove())
             }
 
-            handle(state(States.NAME)) { (message, ctx) ->
+            handle(state(States.NAME)) { message ->
                 if (message.text == null) {
                     bot.answerOn(message, "Name gotta be a text. What's your name?")
                 } else {
                     db.setName(message.from!!.id, message.text!!)
-                    ctx.next()
+                    fsmContext.next()
 
                     bot.answerOn(message, "Ok. How old are you?")
                 }
             }
 
             // Save age (age gotta be digit)
-            handle(isDigit, state(States.AGE)) { (message, ctx) ->
+            handle(isDigit, state(States.AGE)) { message ->
                 db.setAge(message.from!!.id, message.text!!.toInt())
-                ctx.next()
+                fsmContext.next()
 
                 val markup = ReplyKeyboardMarkup(
                     arrayOf(KeyboardButton("Male"), KeyboardButton("Female")),
@@ -66,7 +66,7 @@ suspend fun main(args: Array<String>) {
                 bot.replyTo(it, "Age gotta be a number.\nHow old are you? (digits only)")
             }
 
-            handle(state(States.GENDER)) { (message, ctx) ->
+            handle(state(States.GENDER)) { message ->
                 val gender = parseGender(message.text) // text in [genders], so it's string
 
                 if (gender == Gender.PARSE_ERROR) {
@@ -90,7 +90,7 @@ suspend fun main(args: Array<String>) {
 
                     bot.replyTo(message, text, parseMode = ParseMode.HTML, replyMarkup = markup)
 
-                    ctx.finish() // Finish conversation
+                    fsmContext.finish() // Finish conversation
                 }
             }
         }

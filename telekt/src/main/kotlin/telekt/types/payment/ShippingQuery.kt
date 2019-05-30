@@ -2,7 +2,7 @@ package rocks.waffle.telekt.types
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import rocks.waffle.telekt.types.events.TelegramEvent
+import rocks.waffle.telekt.dispatcher.TelegramEvent
 
 /** This object contains information about an incoming shipping query. */
 @Serializable data class ShippingQuery(

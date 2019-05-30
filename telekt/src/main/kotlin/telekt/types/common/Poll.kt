@@ -4,7 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import rocks.waffle.telekt.contrib.filters.TextableTelegramEvent
-import rocks.waffle.telekt.types.events.TelegramEvent
 
 /** This object contains information about one answer option in a poll. */
 @Serializable data class PollOption(

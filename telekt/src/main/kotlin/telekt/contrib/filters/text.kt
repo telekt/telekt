@@ -1,9 +1,9 @@
 package rocks.waffle.telekt.contrib.filters
 
 import rocks.waffle.telekt.dispatcher.Filter
+import rocks.waffle.telekt.dispatcher.HandlerScope
+import rocks.waffle.telekt.dispatcher.TelegramEvent
 import rocks.waffle.telekt.types.*
-import rocks.waffle.telekt.types.events.Event
-import rocks.waffle.telekt.types.events.TelegramEvent
 
 interface TextableTelegramEvent : TelegramEvent {
     val eventText: String?
@@ -28,6 +28,6 @@ interface TextableTelegramEvent : TelegramEvent {
  * │        [Poll]         │ [Poll.question]                     │
  * └───────────────────────┴─────────────────────────────────────┘
  */
-class TextFilter<E>(private val text: String?) : Filter<E>() where E : Event<out TextableTelegramEvent> {
-    override suspend fun test(value: E): Boolean = text == value.update.eventText
+class TextFilter<T : TextableTelegramEvent>(private val text: String?) : Filter<T>() {
+    override suspend fun test(scope: HandlerScope, value: T): Boolean = text == value.eventText
 }

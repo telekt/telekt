@@ -21,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
 
 const val defaultTimeout: Long = 15000
 
-class BotImpl(
+class KtorBot(
     private val token: String,
     client: HttpClient? = null,
     api: Api = DefaultApi,

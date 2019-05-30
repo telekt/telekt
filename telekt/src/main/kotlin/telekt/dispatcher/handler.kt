@@ -4,23 +4,23 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import mu.KLogger
 import mu.KotlinLogging
-import rocks.waffle.telekt.types.events.Event
 
 
-abstract class Filter<T : Event<*>> {
-    abstract suspend fun test(value: T): Boolean
+
+abstract class Filter<T : TelegramEvent> {
+    abstract suspend fun test(scope: HandlerScope, value: T): Boolean
 }
 
 
-data class Handler<T : Event<*>>(
+data class Handler<T : TelegramEvent>(
     val filters: Array<out Filter<T>>,
-    val func: suspend (T) -> Unit,
+    val func: suspend HandlerScope.(T) -> Unit,
     val name: String? = null
 ) {
     private val logger: KLogger = KotlinLogging.logger { }
 
-    private suspend fun Filter<T>.testCatched(value: T): Boolean = try {
-        test(value)
+    private suspend fun Filter<T>.testCatched(scope: HandlerScope, value: T): Boolean = try {
+        test(scope, value)
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {
@@ -33,7 +33,7 @@ data class Handler<T : Event<*>>(
      *
      * @return true, if all filters passed, else false
      */
-    suspend fun test(value: T): Boolean = coroutineScope {
+    suspend fun test(scope: HandlerScope, value: T): Boolean = coroutineScope {
         val ch = Channel<Boolean>()
 
         launch {
@@ -42,7 +42,7 @@ data class Handler<T : Event<*>>(
                 jobs.add(
                     launch {
                         ch.send(
-                            it.testCatched(value)
+                            it.testCatched(scope, value)
                         )
                     }
                 )
@@ -62,20 +62,20 @@ data class Handler<T : Event<*>>(
     }
 }
 
-class Handlers<T : Event<*>> {
+class Handlers<T : TelegramEvent> {
     private val logger = KotlinLogging.logger {}
 
     private var handlers: MutableList<Handler<T>> = mutableListOf()
 
-    fun register(vararg filters: Filter<T>, name: String? = null, handler: suspend (T) -> Unit) {
+    fun register(vararg filters: Filter<T>, name: String? = null, handler: suspend HandlerScope.(T) -> Unit) {
         handlers.add(Handler(filters, handler, name = name))
     }
 
-    suspend fun notify(event: T) {
-        val handler = testHandlers(event) ?: return // No handler was finded, nothing to do
+    suspend fun notify(scope: HandlerScope, event: T) {
+        val handler = testHandlers(scope, event) ?: return // No handler was found, nothing to do
 
         try {
-            handler.func(event)
+            handler.func(scope, event)
         } catch (e: Exception) {
             logger.error(e) { "Occurred exception while executing '${handler.name ?: "unknown"}' handler with update {$event}" }
         }
@@ -84,12 +84,12 @@ class Handlers<T : Event<*>> {
     /**
      * @return first handler witch filters are passed
      */
-    private suspend inline fun testHandlers(update: T): Handler<T>? = supervisorScope {
+    private suspend inline fun testHandlers(scope: HandlerScope, update: T): Handler<T>? = supervisorScope {
         val tests = mutableListOf<Deferred<Boolean>>()
         for (handler in handlers) {
             tests.add(
                 async {
-                    handler.test(update)
+                    handler.test(scope, update)
                 }
             )
         }

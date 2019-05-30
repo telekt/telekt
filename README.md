@@ -17,7 +17,6 @@ Table of content:
       * [bot.me](#bot.me)
       * [Reply markup](#reply-markup)
       * [Inline Mode](#inline-mode)
-      * [Working with entities](#working-with-entities)
   * [Advanced use of the API](#advanced-use-of-the-api)
     * [Sending large text messages](#sending-large-text-messages)
     * [Using web hooks](#using-web-hooks)
@@ -57,8 +56,8 @@ Furthermore, you have basic knowledge of the Kotlin programming language and mor
 
 TeleKt splits **calling tg api methods** and **dispatching incoming updates**.    
 
-* For first feature there is class [Bot](telekt/src/main/kotlin/telekt/bot/bot.kt) that encapsulates all API calls in a single class.  
-* For second — class [Dispatcher](telekt/src/main/kotlin/telekt/dispatcher/dispatcher.kt) provide several ways to listen for incoming updates (e.g. messages). 
+* For first feature there is class [Bot](telekt/src/main/kotlin/telekt/bot/Bot.kt) that encapsulates all API calls in a single class.  
+* For second — class [Dispatcher](telekt/src/main/kotlin/telekt/dispatcher/Dispatcher.kt) provide several ways to listen for incoming updates (e.g. messages). 
 
 Create a file called `echobot.kt`.
 Then, open the file and create an instance of the `Bot` and `Dispatcher` classes.
@@ -77,7 +76,7 @@ After that declaration, we need to register some so-called message handlers. Mes
 
 Let's define a message handler which handles incoming `/start` and `/help` commands.
 ```kotlin
-dp.messageHandler(CommandFilter("start", "help")) { message: MessageEvent ->
+dp.messageHandler(CommandFilter("start", "help")) { message: Message ->
     bot.answerOn(message, "Howdy, how are you doing?")
 }
 ```
@@ -100,7 +99,7 @@ Alright, that's it! Our source file now looks like this:
 ```kotlin
 import rocks.waffle.telekt.bot.*
 import rocks.waffle.telekt.dispatcher.*
-import rocks.waffle.telekt.types.events.MessageEvent
+import rocks.waffle.telekt.types.Message
 import rocks.waffle.telekt.contrib.filters.CommandFilter
 
 
@@ -109,7 +108,7 @@ suspend fun main() {
     val bot = Bot("TOKEM")
     val dp = Dispatcher(bot)
 
-    dp.messageHandler(CommandFilter("start", "help")) { message: MessageEvent ->
+    dp.messageHandler(CommandFilter("start", "help")) { message: Message ->
         bot.answerOn(message, "Hi there 0/")
     }
 
@@ -135,20 +134,20 @@ The Message class also has a `contentType` attribute, which defines the type of 
 
 ### Methods
 
-All [API methods](https://core.telegram.org/bots/api#available-methods) are located in the [Bot](telekt/src/main/kotlin/rocks.waffle.telekt/bot/bot.kt) class. 
+All [API methods](https://core.telegram.org/bots/api#available-methods) are located in the [Bot](telekt/src/main/kotlin/telekt/bot/Bot.kt) class. 
 
 ### General use of the API
 
 Outlined below are some general use cases of the API.
 
 #### Message handlers
-A message handler is a function that is given to `messageHandler` function of a [Dispatcher](telekt/src/main/kotlin/telekt/dispatcher/dispatcher.kt) instance.  
+A message handler is a function that is given to `messageHandler` function of a [Dispatcher](telekt/src/main/kotlin/telekt/dispatcher/Dispatcher.kt) instance.  
 Message handlers consist of 0, one or multiple filters.
 Each filter's `test(...)` function must return `True` for a certain message in order for a message handler to become eligible to handle that message. A message handler is declared in the following way:
 ```kotlin
 dp.messageHandler(*filters) { /* ... */ }
 
-fun functionName(message: MessageEvent) { /* ... */ }
+fun functionName(message: Message) { /* ... */ }
 
 dp.messageHandler(*filters, block = ::functionName)
 ```
@@ -177,12 +176,12 @@ All other handlers (callbackQuery, editedMessage, etc) work the same way.
 
 
 #### Bot.me
-[Bot](telekt/src/main/kotlin/telekt/bot/bot.kt).me is lazy started coroutine builded with `async{}` builder that just calls `bot.getMe()`. Only bot creator can change bot user (via [BotFather](https://t.me/BotFather)) so in most cases it's safe to use it.
+[Bot](telekt/src/main/kotlin/telekt/bot/Bot.kt).me is lazy started coroutine builded with `async{}` builder that just calls `bot.getMe()`. Only bot creator can change bot user (via [BotFather](https://t.me/BotFather)) so in most cases it's safe to use it.
 ```kotlin
 bot.me.await()
 ```
 #### Reply markup
-All `send<Something>` functions of [Bot](telekt/src/main/kotlin/telekt/bot/bot.kt) take an optional `replyMarkup` argument.  
+All `send<Something>` functions of [Bot](telekt/src/main/kotlin/telekt/bot/Bot.kt) take an optional `replyMarkup` argument.  
 This argument must be an instance of `ReplyKeyboardMarkup`, `InlineKeyboardMarkup`, `ReplyKeyboardRemove` or `ForceReply`, which are defined in [markup.kt](telekt/src/main/kotlin/telekt/types/replymarkup/markup.kt).
 
 ### Inline Mode
@@ -193,7 +192,10 @@ Refer [Bot Api](https://core.telegram.org/bots/api#messageentity) for extra deta
 
 ## Advanced use of the API
 
-// TODO: write about dispatch modes (need to be implemented)
+// TODO: write about 
+- dispatch modes (need to be implemented)
+- FSM
+- HandlerScope, HandlerContext  
 
 ### Sending large text messages
 Sometimes you must send messages that exceed 5000 characters. The Telegram API can not handle that many characters in one request, so we need to split the message in multiples. Here is how to do that using the API:
@@ -210,7 +212,7 @@ texts.forEach { bot.sendMessage(chat_id, it) }
 
 ### Using web hooks
 
-Webhooks is not implemented yet :(
+// TODO
 
 ### Logging
 

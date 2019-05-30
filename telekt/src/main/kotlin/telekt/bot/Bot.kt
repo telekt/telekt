@@ -18,7 +18,7 @@ import java.nio.file.Paths
 /** Bot factory */
 @Suppress("FunctionName")
 fun Bot(token: String, client: HttpClient? = null, api: Api = DefaultApi, defaultParseMode: ParseMode? = null, requestTimeout: Long? = null): Bot =
-    BotImpl(token, client = client, api = api, defaultParseMode = defaultParseMode, requestTimeout = requestTimeout)
+    KtorBot(token, client = client, api = api, defaultParseMode = defaultParseMode, requestTimeout = requestTimeout)
 
 suspend fun Bot.downloadFile(path: String, destination: String): Unit = downloadFile(path, Paths.get(destination))
 
