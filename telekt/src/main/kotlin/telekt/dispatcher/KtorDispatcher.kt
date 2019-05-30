@@ -278,6 +278,9 @@ class KtorDispatcher(
 
                     if (relax > 0) delay(relax.seconds.inMilliseconds.longValue)
                 }
+
+                // on shutdown, notify telegram that we handled last updates
+                bot.getUpdates(offset = offset, limit = 1, timeout = 0, allowedUpdates = allowedUpdates)
             }
         }
 
