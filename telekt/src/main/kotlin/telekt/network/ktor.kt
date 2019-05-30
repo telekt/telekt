@@ -113,12 +113,13 @@ internal class TelegramClient(
     }
 
     //<editor-fold desc="private">
-    private suspend fun <T : Any> callTelegram(token: String, request: Request<T>, timeout: Long): String = (withTimeoutOrNull(timeout) { // workaround for custom timeouts in ktor 1.2.0
-        when (request) {
-            is MultipartRequest<T> -> prepareCall(token, request)
-            is SimpleRequest<T> -> prepareCall(token, request)
-        }
-    } ?: throw TimeoutException(timeout)).response.use { it.readText() }
+    private suspend fun <T : Any> callTelegram(token: String, request: Request<T>, timeout: Long): String =
+        withTimeoutOrTimeoutException(timeout) { // workaround for custom timeouts in ktor 1.2.0
+            when (request) {
+                is MultipartRequest<T> -> prepareCall(token, request)
+                is SimpleRequest<T> -> prepareCall(token, request)
+            }
+        }.response.use { it.readText() }
 
     /**
      * Checks answer from telegram on errors.
@@ -242,4 +243,7 @@ private operator fun Int.compareTo(other: HttpStatusCode): Int = this - other.va
 
 /** Needed for [checkTelegramError] */
 private operator fun HttpStatusCode.compareTo(other: Int): Int = this.value - other
+
+private suspend fun <T> withTimeoutOrTimeoutException(timeoutMillis: Long, block: suspend () -> T): T =
+    withTimeoutOrNull(timeoutMillis) { block() } ?: throw TimeoutException(timeoutMillis)
 //</editor-fold>
