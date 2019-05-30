@@ -33,32 +33,36 @@ data class Handler<T : TelegramEvent>(
      *
      * @return true, if all filters passed, else false
      */
-    suspend fun test(scope: HandlerScope, value: T): Boolean = coroutineScope {
-        val ch = Channel<Boolean>()
+    suspend fun test(scope: HandlerScope, value: T): Boolean = when(filters.size) {
+        0 -> true
+        1 -> filters.first().testCatched(scope, value)
+        else -> coroutineScope {
+            val ch = Channel<Boolean>()
 
-        launch {
-            val jobs = mutableListOf<Job>()
-            filters.forEach {
-                jobs.add(
-                    launch {
-                        ch.send(
-                            it.testCatched(scope, value)
-                        )
-                    }
-                )
+            launch {
+                val jobs = mutableListOf<Job>()
+                filters.forEach {
+                    jobs.add(
+                        launch {
+                            ch.send(
+                                it.testCatched(scope, value)
+                            )
+                        }
+                    )
+                }
+
+                jobs.joinAll()
+                ch.close()
             }
 
-            jobs.joinAll()
-            ch.close()
-        }
-
-        for (data in ch) {
-            if (!data) {
-                coroutineContext.cancelChildren() // to kill the rest of tasks (filter tests) we  don't need
-                return@coroutineScope false
+            for (data in ch) {
+                if (!data) {
+                    coroutineContext.cancelChildren() // to kill the rest of tasks (filter tests) we  don't need
+                    return@coroutineScope false
+                }
             }
+            return@coroutineScope true
         }
-        return@coroutineScope true
     }
 }
 
