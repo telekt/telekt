@@ -208,7 +208,7 @@ class KtorDispatcher(
 
     @kotlinx.coroutines.ObsoleteCoroutinesApi
     private inner class Polling {
-        private val pollingControlActor = scope.actor<PollingSignal>(onCompletion = { println("actor complete!") }) {
+        private val pollingControlActor = scope.actor<PollingSignal> {
             var stopCallback: CompletableDeferred<Unit>? = null
             var job: Job? = null
 
