@@ -44,7 +44,7 @@ class InlineKeyboardMarkupBuilder(val lineWidth: Int = 4) {
         else add(button)
     }
 
-    fun build() = InlineKeyboardMarkup(*keyboard.map { it.toTypedArray() }.toTypedArray())
+    fun build() = InlineKeyboardMarkup(keyboard)
 
     operator fun InlineKeyboardButton.unaryPlus() = insert(this)
 }

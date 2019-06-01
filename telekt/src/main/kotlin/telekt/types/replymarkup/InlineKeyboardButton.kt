@@ -1,6 +1,8 @@
 package rocks.waffle.telekt.types.replymarkup
 
 import kotlinx.serialization.*
+import kotlinx.serialization.internal.SerialClassDescImpl
+import rocks.waffle.telekt.types.CallbackGame
 
 // TODO: more verbose comments
 
@@ -55,7 +57,7 @@ import kotlinx.serialization.*
          * This offers a quick way for the user to open your bot in inline mode in the same chat –
          * good for selecting something from multiple options.
          */
-        @SerialName("switch_inline_query_current_chat") val SwitchInlineIueryCurrentChat: String
+        @SerialName("switch_inline_query_current_chat") val SwitchInlineQueryCurrentChat: String
     ) : InlineKeyboardButton()
 
     /** **NOTE:** This type of button **must** always be the first button in the first row. */
@@ -82,5 +84,62 @@ import kotlinx.serialization.*
         is InlineKeyboardButton.SwitchInlineQueryCurrentChat -> InlineKeyboardButton.SwitchInlineQueryCurrentChat.serializer().serialize(encoder, obj)
         is InlineKeyboardButton.CallbackGame -> InlineKeyboardButton.CallbackGame.serializer().serialize(encoder, obj)
         is InlineKeyboardButton.Pay -> InlineKeyboardButton.Pay.serializer().serialize(encoder, obj)
+    }
+
+    override val descriptor: SerialDescriptor = object : SerialClassDescImpl("ReplyMarkup") {
+        init {
+            addElement("text") // index0
+            addElement("url") // index1
+            addElement("login_url") // index2
+            addElement("callback_data") // index3
+            addElement("switch_inline_query") // index4
+            addElement("switch_inline_query_current_chat") // index5
+            addElement("callback_game") // index6
+            addElement("pay") // index7
+        }
+    }
+
+
+    override fun deserialize(decoder: Decoder): InlineKeyboardButton {
+        val inp: CompositeDecoder = decoder.beginStructure(descriptor)
+
+        var text: String? = null
+        var url: String? = null
+        var loginUrl: LoginUrl? = null
+        var callbackData: String? = null
+        var switchInlineQuery: String? = null
+        var switchInlineQueryCurrentChat: String? = null
+        var callbackGame: CallbackGame? = null
+        var pay: Boolean? = null
+
+        loop@ while (true) {
+            when (val i = inp.decodeElementIndex(descriptor)) {
+                CompositeDecoder.READ_DONE -> break@loop
+                0 -> text = inp.decodeStringElement(descriptor, i)
+                1 -> url = inp.decodeStringElement(descriptor, i)
+                2 -> loginUrl = inp.decodeSerializableElement(descriptor, i, LoginUrl.serializer())
+                3 -> callbackData = inp.decodeStringElement(descriptor, i)
+                4 -> switchInlineQuery = inp.decodeStringElement(descriptor, i)
+                5 -> switchInlineQueryCurrentChat = inp.decodeStringElement(descriptor, i)
+                6 -> callbackGame = inp.decodeSerializableElement(descriptor, i, CallbackGame.serializer())
+                7 -> pay = inp.decodeBooleanElement(descriptor, i)
+
+                else -> throw SerializationException("Unknown index $i")
+            }
+        }
+        inp.endStructure(descriptor)
+
+        if (text == null) throw SerializationException("text must be given")
+
+        return when {
+            url != null -> InlineKeyboardButton.Url(text, url)
+            loginUrl != null -> InlineKeyboardButton.LoginUrl(text, loginUrl)
+            callbackData != null -> InlineKeyboardButton.CallbackData(text, callbackData)
+            switchInlineQuery != null -> InlineKeyboardButton.SwitchInlineQuery(text, switchInlineQuery)
+            switchInlineQueryCurrentChat != null -> InlineKeyboardButton.SwitchInlineQueryCurrentChat(text, switchInlineQueryCurrentChat)
+            callbackGame != null -> InlineKeyboardButton.CallbackGame(text, callbackGame)
+            pay != null -> InlineKeyboardButton.Pay(text)
+            else -> throw SerializationException("WTF?")
+        }
     }
 }

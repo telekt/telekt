@@ -1,5 +1,5 @@
 group = "rocks.waffle.telekt"
-version = "0.6.4-SNAPSHOT"
+version = "0.6.5-SNAPSHOT"
 
 val kotlinVersion = "1.3.30"
 val ktorVersion = "1.2.0"

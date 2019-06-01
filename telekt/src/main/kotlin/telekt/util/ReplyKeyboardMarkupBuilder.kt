@@ -69,7 +69,7 @@ class ReplyKeyboardMarkupBuilder(
     }
 
     fun build() = ReplyKeyboardMarkup(
-        *keyboard.map { it.toTypedArray() }.toTypedArray(),
+        keyboard,
         resizeKeyboard = resizeKeyboard,
         oneTimeKeyboard = oneTimeKeyboard,
         selective = selective

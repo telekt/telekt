@@ -6,7 +6,7 @@ import kotlinx.serialization.Transient
 import rocks.waffle.telekt.contrib.filters.TextableTelegramEvent
 import rocks.waffle.telekt.types.enums.ContentType
 import rocks.waffle.telekt.types.passport.PassportData
-import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
+import rocks.waffle.telekt.types.replymarkup.InlineKeyboardMarkup
 
 
 /** This object represents a message. */
@@ -57,7 +57,7 @@ import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
     @SerialName("successful_payment") val successfulPayment: SuccessfulPayment? = null,
     @SerialName("connected_website") val connectedWebsite: String? = null,
     @SerialName("passport_data") val passportData: PassportData? = null,
-    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
 ) : TextableTelegramEvent {
     @Transient val contentType: ContentType by lazy {
         when {
