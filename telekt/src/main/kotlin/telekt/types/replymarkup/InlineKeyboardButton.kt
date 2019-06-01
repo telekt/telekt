@@ -15,6 +15,15 @@ import kotlinx.serialization.*
         val url: String
     ) : InlineKeyboardButton()
 
+    @Serializable data class LoginUrl(
+        override val text: String,
+        /**
+         * An HTTP URL used to automatically authorize the user.
+         * Can be used as a replacement for the [Telegram Login Widget](https://core.telegram.org/widgets/login).
+         */
+        @SerialName("login_url") val loginUrl: rocks.waffle.telekt.types.replymarkup.LoginUrl
+    ) : InlineKeyboardButton()
+
 
     @Serializable data class CallbackData(
         override val text: String,
@@ -67,6 +76,7 @@ import kotlinx.serialization.*
 @Serializer(forClass = InlineKeyboardButton::class) object InlineKeyboardButtonSerializer : KSerializer<InlineKeyboardButton> {
     override fun serialize(encoder: Encoder, obj: InlineKeyboardButton) = when (obj) {
         is InlineKeyboardButton.Url -> InlineKeyboardButton.Url.serializer().serialize(encoder, obj)
+        is InlineKeyboardButton.LoginUrl -> InlineKeyboardButton.LoginUrl.serializer().serialize(encoder, obj)
         is InlineKeyboardButton.CallbackData -> InlineKeyboardButton.CallbackData.serializer().serialize(encoder, obj)
         is InlineKeyboardButton.SwitchInlineQuery -> InlineKeyboardButton.SwitchInlineQuery.serializer().serialize(encoder, obj)
         is InlineKeyboardButton.SwitchInlineQueryCurrentChat -> InlineKeyboardButton.SwitchInlineQueryCurrentChat.serializer().serialize(encoder, obj)

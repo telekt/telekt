@@ -1,6 +1,6 @@
 ### TeleKt
 
-Easy to use, asynchronous wrapper for the [Telegram Bot API](https://core.telegram.org/bots/api") written in pure Kotlin. Inspired by [aiogram](https://github.com/aiogram/aiogram).
+Easy to use, asynchronous wrapper for the [Telegram Bot API](https://core.telegram.org/bots/api") (support [v4.3](https://core.telegram.org/bots/api#may-31-2019)) written in pure Kotlin. Inspired by [aiogram](https://github.com/aiogram/aiogram).
 
 ![logo](resources/logo.svg)
 
