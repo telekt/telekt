@@ -1,58 +1,63 @@
 package rocks.waffle.telekt.examples.fsm
 
 
+import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.contrib.storages.ActorMemoryStorage
 import rocks.waffle.telekt.dispatcher.Dispatcher
 import rocks.waffle.telekt.fsm.next
-import rocks.waffle.telekt.types.KeyboardButton
-import rocks.waffle.telekt.types.ReplyKeyboardMarkup
-import rocks.waffle.telekt.types.ReplyKeyboardRemove
 import rocks.waffle.telekt.types.enums.ParseMode
+import rocks.waffle.telekt.types.replymarkup.KeyboardButton
+import rocks.waffle.telekt.types.replymarkup.ReplyKeyboardMarkup
+import rocks.waffle.telekt.types.replymarkup.ReplyKeyboardRemove
+import rocks.waffle.telekt.util.answerOn
 import rocks.waffle.telekt.util.handlerregistration.*
 import rocks.waffle.telekt.util.markdown.html
+import rocks.waffle.telekt.util.replyTo
 
 
 suspend fun main(args: Array<String>) {
     val parsedArgs = args.parse()
-    val dp = Dispatcher(parsedArgs.token, ActorMemoryStorage())
+    val bot = Bot(parsedArgs.token)
+    val dp = Dispatcher(bot, ActorMemoryStorage())
     val db = DataBase()
-    val bot = dp.bot
 
     dp.dispatch {
         messages {
-            handle(command("start")) { (message, ctx) ->
+            handle(command("start")) { message ->
                 // set state
-                ctx.setState(States.NAME)
+                fsmContext.setState(States.NAME)
 
                 bot.replyTo(message, "Hi there! What's your name?")
             }
 
-            handle(command("canceled")) { (message, ctx) ->
+            handle(command("canceled")) { message ->
                 // Cancel state and inform user about it
-                ctx.finish()
+                fsmContext.finish()
                 // And remove keyboard (just in case)
                 bot.replyTo(message, "Cenceled.", replyMarkup = ReplyKeyboardRemove())
             }
 
-            handle(state(States.NAME)) { (message, ctx) ->
+            handle(state(States.NAME)) { message ->
                 if (message.text == null) {
                     bot.answerOn(message, "Name gotta be a text. What's your name?")
                 } else {
                     db.setName(message.from!!.id, message.text!!)
-                    ctx.next()
+                    fsmContext.next()
 
                     bot.answerOn(message, "Ok. How old are you?")
                 }
             }
 
             // Save age (age gotta be digit)
-            handle(isDigit, state(States.AGE)) { (message, ctx) ->
+            handle(isDigit, state(States.AGE)) { message ->
                 db.setAge(message.from!!.id, message.text!!.toInt())
-                ctx.next()
+                fsmContext.next()
 
                 val markup = ReplyKeyboardMarkup(
-                    arrayOf(KeyboardButton("Male"), KeyboardButton("Female")),
-                    arrayOf(KeyboardButton("Other"))
+                    listOf(
+                        listOf(KeyboardButton("Male"), KeyboardButton("Female")),
+                        listOf(KeyboardButton("Other"))
+                    )
                 )
 
                 bot.replyTo(message, "What is your gender?", replyMarkup = markup)
@@ -63,7 +68,7 @@ suspend fun main(args: Array<String>) {
                 bot.replyTo(it, "Age gotta be a number.\nHow old are you? (digits only)")
             }
 
-            handle(state(States.GENDER)) { (message, ctx) ->
+            handle(state(States.GENDER)) { message ->
                 val gender = parseGender(message.text) // text in [genders], so it's string
 
                 if (gender == Gender.PARSE_ERROR) {
@@ -87,7 +92,7 @@ suspend fun main(args: Array<String>) {
 
                     bot.replyTo(message, text, parseMode = ParseMode.HTML, replyMarkup = markup)
 
-                    ctx.finish() // Finish conversation
+                    fsmContext.finish() // Finish conversation
                 }
             }
         }

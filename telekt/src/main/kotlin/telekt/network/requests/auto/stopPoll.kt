@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import rocks.waffle.telekt.network.TelegramMethod
 import rocks.waffle.telekt.network.requests.abstracts.SimpleRequest
-import rocks.waffle.telekt.types.InlineKeyboardMarkup
-import rocks.waffle.telekt.util.Recipient
 import rocks.waffle.telekt.types.Poll
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
+import rocks.waffle.telekt.util.Recipient
 
 
 /**
@@ -24,7 +24,7 @@ import rocks.waffle.telekt.types.Poll
     /** Identifier of the original message with the poll */
     @SerialName("message_id") val messageId: Int,
     /** A JSON-serialized object for a new message inline keyboard. */
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : SimpleRequest<Poll>() {
     @Transient override val method = TelegramMethod.stopPoll
     @Transient override val resultDeserializer: KSerializer<out Poll> = Poll.serializer()

@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import rocks.waffle.telekt.network.TelegramMethod
 import rocks.waffle.telekt.network.requests.abstracts.SimpleRequest
-import rocks.waffle.telekt.types.InlineKeyboardMarkup
 import rocks.waffle.telekt.types.Message
 import rocks.waffle.telekt.types.enums.ParseMode
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 import rocks.waffle.telekt.util.Recipient
 import rocks.waffle.telekt.util.serializer
 
@@ -28,7 +28,7 @@ import rocks.waffle.telekt.util.serializer
     /** Disables link previews for links in this message */
     @SerialName("disable_web_page_preview") val disableWebPagePreview: Boolean? = null,
     /** A JSON-serialized object for an inline keyboard. */
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : SimpleRequest<Unit>() {
     @Transient override val method = TelegramMethod.editMessageText
     @Transient override val resultDeserializer: KSerializer<out Unit> = Unit.serializer()
@@ -54,7 +54,7 @@ import rocks.waffle.telekt.util.serializer
     /** Disables link previews for links in this message */
     @SerialName("disable_web_page_preview") val disableWebPagePreview: Boolean? = null,
     /** A JSON-serialized object for an inline keyboard. */
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : SimpleRequest<Message>() {
     @Transient override val method = TelegramMethod.editMessageText
     @Transient override val resultDeserializer: KSerializer<out Message> = Message.serializer()

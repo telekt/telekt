@@ -4,20 +4,22 @@ package rocks.waffle.telekt.examples.keyboard
  * Example of sending custom keyboards
  */
 
+import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.dispatcher.Dispatcher
-import rocks.waffle.telekt.types.ReplyKeyboardRemove
-import rocks.waffle.telekt.util.Recipient
+import rocks.waffle.telekt.types.replymarkup.KeyboardButton
+import rocks.waffle.telekt.types.replymarkup.ReplyKeyboardRemove
 import rocks.waffle.telekt.util.ReplyKeyboardMarkup
 import rocks.waffle.telekt.util.handlerregistration.command
 import rocks.waffle.telekt.util.handlerregistration.dispatch
 import rocks.waffle.telekt.util.handlerregistration.handle
 import rocks.waffle.telekt.util.handlerregistration.messages
+import rocks.waffle.telekt.util.replyTo
 
 
 suspend fun main(args: Array<String>) {
     val parsedArgs = args.parse()
-    val dp = Dispatcher(parsedArgs.token)
-    val bot = dp.bot
+    val bot = Bot(parsedArgs.token)
+    val dp = Dispatcher(bot)
 
     dp.dispatch {
         messages {
@@ -29,7 +31,7 @@ suspend fun main(args: Array<String>) {
                  * the user can press a special button in the input field to see the custom keyboard again. Defaults to false.
                  */
                 val markup = ReplyKeyboardMarkup(oneTimeKeyboard = true) {
-                    add(button("test"), button("text"))
+                    add(KeyboardButton("test"), KeyboardButton("text"))
                 }
                 bot.replyTo(it, "You can use this keyboard only once", replyMarkup = markup)
             }
@@ -41,7 +43,7 @@ suspend fun main(args: Array<String>) {
                  * Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.
                  */
                 val markup = ReplyKeyboardMarkup(resizeKeyboard = true) {
-                    add(button("test"), button("text"))
+                    add(KeyboardButton("test"), KeyboardButton("text"))
                 }
                 bot.replyTo(it, "This keyboard will be resized vertically for optimal fit", replyMarkup = markup)
             }
@@ -59,11 +61,6 @@ suspend fun main(args: Array<String>) {
             }
         }
     }
-
-    bot.sendMessage(
-        Recipient(218485655),
-        "text"
-    )
 
     dp.poll()
 }

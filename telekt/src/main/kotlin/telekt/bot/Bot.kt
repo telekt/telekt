@@ -1,24 +1,25 @@
 package rocks.waffle.telekt.bot
 
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.Deferred
 import rocks.waffle.telekt.network.Api
+import rocks.waffle.telekt.network.DefaultApi
 import rocks.waffle.telekt.network.InputFile
 import rocks.waffle.telekt.network.requests.edit.StopMessageLiveLocation
 import rocks.waffle.telekt.network.requests.edit.StopMessageLiveLocationInline
 import rocks.waffle.telekt.types.*
+import rocks.waffle.telekt.types.enums.AllowedUpdate
 import rocks.waffle.telekt.types.enums.ParseMode
 import rocks.waffle.telekt.types.passport.PassportElementError
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 import rocks.waffle.telekt.util.Recipient
 import java.nio.file.Path
 import java.nio.file.Paths
 
 /** Bot factory */
 @Suppress("FunctionName")
-fun Bot(token: String, defaultParseMode: ParseMode? = null): Bot = BotImpl(token, defaultParseMode = defaultParseMode)
-
-/** Bot factory */
-@Suppress("FunctionName")
-fun Bot(token: String, api: Api, defaultParseMode: ParseMode? = null): Bot = BotImpl(token, api, defaultParseMode = defaultParseMode)
+fun Bot(token: String, client: HttpClient? = null, api: Api = DefaultApi, defaultParseMode: ParseMode? = null, requestTimeout: Long? = null): Bot =
+    KtorBot(token, client = client, api = api, defaultParseMode = defaultParseMode, requestTimeout = requestTimeout)
 
 suspend fun Bot.downloadFile(path: String, destination: String): Unit = downloadFile(path, Paths.get(destination))
 
@@ -80,8 +81,36 @@ interface Bot {
         offset: Int? = null,
         limit: Byte? = null,
         timeout: Int? = null,
-        allowedUpdates: List<String>? /* Enum? */ = null
+        allowedUpdates: List<AllowedUpdate>? = null
     ): List<Update>
+
+    /**
+     * Use this method to specify a url and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, we will send an HTTPS POST request to the specified url, containing a JSON-serialized Update. In case of an unsuccessful request, we will give up after a reasonable amount of attempts. Returns True on success. If you'd like to make sure that the Webhook request comes from Telegram, we recommend using a secret path in the URL, e.g. https://www.example.com/<token>. Since nobody else knows your bot‘s token, you can be pretty sure it’s us.
+     *
+     * @param url HTTPS url to send updates to. Use an empty string to remove webhook integration
+     *
+     * @param certificate Upload your public key certificate so that the root certificate in use can be checked.
+     *   See our [self-signed guide](https://core.telegram.org/bots/self-signed) for details.
+     *
+     * @param maxConnections Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery, 1-100. Defaults to 40.
+     *   Use lower values to limit the load on your bot‘s server, and higher values to increase your bot’s throughput.
+     *
+     * @param allowedUpdates List the types of updates you want your bot to receive.
+     * For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types.
+     * See [AllowedUpdate] for a complete list of available update types.
+     * Specify an empty list to receive all updates regardless of type (default). If not specified, the previous setting will be used.
+     *
+     * Please note that this parameter doesn't affect updates created before the call to the setWebhook,
+     * so unwanted updates may be received for a short period of time.
+     *
+     * more: https://core.telegram.org/bots/api#setwebhook
+     */
+    suspend fun setWebhook(
+        url: String,
+        certificate: InputFile? = null,
+        maxConnections: Int? = null,
+        allowedUpdates: List<AllowedUpdate>? = null
+    ): Unit
 
     /**
      * Use this method to delete a message, including service messages, with the following limitations:
@@ -756,7 +785,7 @@ interface Bot {
         inlineMessageId: String,
         latitude: Float,
         longitude: Float,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Unit
 
 
@@ -779,7 +808,7 @@ interface Bot {
         messageId: Int,
         latitude: Float,
         longitude: Float,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
     /**
@@ -798,7 +827,7 @@ interface Bot {
         text: String,
         parseMode: ParseMode? = null,
         disableWebPagePreview: Boolean? = null,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Unit
 
 
@@ -821,7 +850,7 @@ interface Bot {
         text: String,
         parseMode: ParseMode? = null,
         disableWebPagePreview: Boolean? = null,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
 
@@ -839,7 +868,7 @@ interface Bot {
         inlineMessageId: String,
         caption: String? = null,
         parseMode: ParseMode? = null,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Unit
 
     /**
@@ -859,7 +888,7 @@ interface Bot {
         messageId: Int,
         caption: String? = null,
         parseMode: ParseMode? = null,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
 
@@ -879,7 +908,7 @@ interface Bot {
     suspend fun editMessageMedia(
         inlineMessageId: String,
         media: InputMedia,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Unit
 
     /**
@@ -899,7 +928,7 @@ interface Bot {
         chatId: Recipient,
         messageId: Int,
         media: InputMedia,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
 
@@ -913,7 +942,7 @@ interface Bot {
      */
     suspend fun editMessageReplyMarkup(
         inlineMessageId: String,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Unit
 
     /**
@@ -929,7 +958,7 @@ interface Bot {
     suspend fun editMessageReplyMarkup(
         chatId: Recipient,
         messageId: Int,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
 
@@ -957,6 +986,41 @@ interface Bot {
         chatId: Recipient,
         messageId: Int
     ): Message
+    //</editor-fold>
+
+    //<editor-fold desc="inline">
+    /**
+     * Use this method to send answers to an inline query. On success, True is returned. No more than 50 results per query are allowed.
+     *
+     * @param inlineQueryId Unique identifier for the answered query
+     * @param results A JSON-serialized array of results for the inline query
+     * @param cacheTime The maximum amount of time in seconds that the result of the inline query may be cached on the server. Defaults to 300.
+     * @param isPersonal Pass True, if results may be cached on the server side only for the user that sent the query.
+     *   By default, results may be returned to any user who sends the same query
+     * @param nextOffset Pass the offset that a client should send in the next query with the same text to receive more results.
+     *   Pass an empty string if there are no more results or if you don‘t support pagination. Offset length can’t exceed 64 bytes.
+     * @param switchPmText If passed, clients will display a button with specified text that switches the user to a private chat with
+     *   the bot and sends the bot a start message with the parameter switch_pm_parameter
+     * @param switchPmParameter Deep-linking parameter for the /start message sent to the bot when user presses the switch button.
+     *   1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.
+     *
+     *   Example: An inline bot that sends YouTube videos can ask the user to connect the bot to their YouTube account to adapt search results accordingly.
+     *   To do this, it displays a ‘Connect your YouTube account’ button above the results, or even before showing any.
+     *   The user presses the button, switches to a private chat with the bot and, in doing so, passes a start parameter that instructs
+     *   the bot to return an oauth link. Once done, the bot can offer a switch_inline button so that the user can easily return to
+     *   the chat where they wanted to use the bot's inline capabilities.
+     *
+     * more: https://core.telegram.org/bots/api#answerinlinequery
+     */
+    suspend fun answerInlineQuery(
+        inlineQueryId: String,
+        results: List<InlineQueryResult>,
+        cacheTime: Int? = null,
+        isPersonal: Boolean? = null,
+        nextOffset: String? = null,
+        switchPmText: String? = null,
+        switchPmParameter: String? = null
+    ): Unit
     //</editor-fold>
 
     //<editor-fold desc="payments">
@@ -1013,7 +1077,7 @@ interface Bot {
         isFlexible: Boolean? = null,
         disableNotification: Boolean? = null,
         replyToMessageId: Int? = null,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
     /**
@@ -1101,7 +1165,7 @@ interface Bot {
     suspend fun stopPoll(
         chatId: Recipient,
         messageId: Int,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Poll
     //</editor-fold>
 

@@ -1,7 +1,7 @@
 package rocks.waffle.telekt.util
 
-import rocks.waffle.telekt.types.KeyboardButton
-import rocks.waffle.telekt.types.ReplyKeyboardMarkup
+import rocks.waffle.telekt.types.replymarkup.KeyboardButton
+import rocks.waffle.telekt.types.replymarkup.ReplyKeyboardMarkup
 
 
 /**
@@ -69,15 +69,11 @@ class ReplyKeyboardMarkupBuilder(
     }
 
     fun build() = ReplyKeyboardMarkup(
-        *keyboard.map { it.toTypedArray() }.toTypedArray(),
+        keyboard,
         resizeKeyboard = resizeKeyboard,
         oneTimeKeyboard = oneTimeKeyboard,
         selective = selective
     )
 
     operator fun KeyboardButton.unaryPlus() = insert(this)
-
-    /** Alias for [KeyboardButton] */
-    fun button(text: String, requestContact: Boolean? = null, requestLocation: Boolean? = null) =
-        KeyboardButton(text, requestContact, requestLocation)
 }

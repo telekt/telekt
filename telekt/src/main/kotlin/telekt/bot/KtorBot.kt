@@ -1,44 +1,64 @@
 package rocks.waffle.telekt.bot
 
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.*
 import rocks.waffle.telekt.network.Api
+import rocks.waffle.telekt.network.DefaultApi
 import rocks.waffle.telekt.network.InputFile
-import rocks.waffle.telekt.network.ktor.KtorApi
+import rocks.waffle.telekt.network.TelegramClient
 import rocks.waffle.telekt.network.requests.auto.*
 import rocks.waffle.telekt.network.requests.edit.*
 import rocks.waffle.telekt.network.requests.etc.DeleteMessage
 import rocks.waffle.telekt.network.requests.etc.GetMe
 import rocks.waffle.telekt.network.requests.etc.GetUpdates
 import rocks.waffle.telekt.types.*
+import rocks.waffle.telekt.types.enums.AllowedUpdate
 import rocks.waffle.telekt.types.enums.ParseMode
 import rocks.waffle.telekt.types.passport.PassportElementError
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 import rocks.waffle.telekt.util.Recipient
 import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
 
+const val defaultTimeout: Long = 15000
 
-class BotImpl(
+class KtorBot(
     private val token: String,
-    private val api: Api = KtorApi(),
-    private val defaultParseMode: ParseMode? = null
+    client: HttpClient? = null,
+    api: Api = DefaultApi,
+    private val defaultParseMode: ParseMode? = null,
+    requestTimeout: Long? = null
 ) : Bot, CoroutineScope {
+    private val requestTimeout_ = requestTimeout ?: defaultTimeout
+    private val network = TelegramClient(client, api, requestTimeout_)
+
+    //<editor-fold desc="lazy me">
     private val job = Job()
     override val coroutineContext: CoroutineContext get() = Dispatchers.Default + job
     override val me: Deferred<User> = async(start = CoroutineStart.LAZY) { getMe() }
+    //</editor-fold>
 
-    override suspend fun downloadFile(path: String, destination: Path) = api.downloadFile(token, path, destination)
+    override suspend fun downloadFile(path: String, destination: Path) = network.downloadFile(token, path, destination)
 
-    //<editor-fold desc="api">
-    override suspend fun getMe(): User = api.makeRequest(token, GetMe())
+    //<editor-fold desc="api methods impl">
+    override suspend fun getMe(): User = network.makeRequest(token, GetMe())
 
-    override suspend fun getUpdates(offset: Int?, limit: Byte?, timeout: Int?, allowedUpdates: List<String>?): List<Update> =
-        api.makeRequest(
+    override suspend fun getUpdates(offset: Int?, limit: Byte?, timeout: Int?, allowedUpdates: List<AllowedUpdate>?): List<Update> =
+        network.makeRequest(
             token,
-            GetUpdates(offset, limit, timeout, allowedUpdates)
+            GetUpdates(offset, limit, timeout, allowedUpdates),
+            /** ([getUpdates] timeout in millis) + (default request timeout / 2) */
+            timeout = timeout?.let { (it * 1000 + requestTimeout_ / 2) }
+        )
+
+    override suspend fun setWebhook(url: String, certificate: InputFile?, maxConnections: Int?, allowedUpdates: List<AllowedUpdate>?): Unit =
+        network.makeRequest(
+            token,
+            SetWebhook(url, certificate, maxConnections, allowedUpdates)
         )
 
     override suspend fun deleteMessage(chatId: Recipient, messageId: Int) =
-        api.makeRequest(
+        network.makeRequest(
             token,
             DeleteMessage(chatId, messageId)
         )
@@ -53,7 +73,7 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendMessage(
                 chatId,
@@ -67,7 +87,7 @@ class BotImpl(
         )
 
     override suspend fun forwardMessage(chatId: Recipient, fromChatId: Recipient, disableNotification: Boolean?, messageId: Int): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             ForwardMessage(chatId, fromChatId, disableNotification, messageId)
         )
@@ -81,7 +101,7 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendPhoto(chatId, photo, caption, parseMode ?: defaultParseMode, disableNotification, replyToMessageId, replyMarkup)
         )
@@ -99,7 +119,7 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendAudio(
                 chatId,
@@ -126,7 +146,7 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendDocument(
                 chatId,
@@ -154,7 +174,7 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendVideo(
                 chatId,
@@ -185,7 +205,7 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendAnimation(
                 chatId,
@@ -212,7 +232,7 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendVoice(chatId, voice, caption, parseMode ?: defaultParseMode, duration, disableNotification, replyToMessageId, replyMarkup)
         )
@@ -227,7 +247,7 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendVideoNote(chatId, videoNote, duration, length, thumb, disableNotification, replyToMessageId, replyMarkup)
         )
@@ -238,7 +258,7 @@ class BotImpl(
         disableNotification: Boolean?,
         replyToMessageId: Int?
     ): List<Message> =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendMediaGroup(chatId, media, disableNotification, replyToMessageId)
         )
@@ -252,7 +272,7 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendLocation(chatId, latitude, longitude, livePeriod, disableNotification, replyToMessageId, replyMarkup)
         )
@@ -269,7 +289,7 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendVenue(
                 chatId,
@@ -295,37 +315,37 @@ class BotImpl(
         replyToMessageId: Int?,
         replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendContact(chatId, phoneNumber, firstName, lastName, vcard, disableNotification, replyToMessageId, replyMarkup)
         )
 
     override suspend fun sendChatAction(chatId: Recipient, action: String): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendChatAction(chatId, action)
         )
 
     override suspend fun getUserProfilePhotos(userId: Int, offset: Int?, limit: Int?): UserProfilePhotos =
-        api.makeRequest(
+        network.makeRequest(
             token,
             GetUserProfilePhotos(userId, offset, limit)
         )
 
     override suspend fun getFile(fileId: String): File =
-        api.makeRequest(
+        network.makeRequest(
             token,
             GetFile(fileId)
         )
 
     override suspend fun kickChatMember(chatId: Recipient, userId: Int, untilDate: Int?): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             KickChatMember(chatId, userId, untilDate)
         )
 
     override suspend fun unbanChatMember(chatId: Recipient, userId: Int): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             UnbanChatMember(chatId, userId)
         )
@@ -339,7 +359,7 @@ class BotImpl(
         canSendOtherMessages: Boolean?,
         canAddWebPagePreviews: Boolean?
     ): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             RestrictChatMember(
                 chatId,
@@ -364,7 +384,7 @@ class BotImpl(
         canPinMessages: Boolean?,
         canPromoteMembers: Boolean?
     ): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             PromoteChatMember(
                 chatId,
@@ -381,91 +401,91 @@ class BotImpl(
         )
 
     override suspend fun exportChatInviteLink(chatId: Recipient): String =
-        api.makeRequest(
+        network.makeRequest(
             token,
             ExportChatInviteLink(chatId)
         )
 
     override suspend fun setChatPhoto(chatId: Recipient, photo: InputFile): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SetChatPhoto(chatId, photo)
         )
 
     override suspend fun deleteChatPhoto(chatId: Recipient): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             DeleteChatPhoto(chatId)
         )
 
     override suspend fun setChatTitle(chatId: Recipient, title: String): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SetChatTitle(chatId, title)
         )
 
     override suspend fun setChatDescription(chatId: Recipient, description: String?): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SetChatDescription(chatId, description)
         )
 
     override suspend fun pinChatMessage(chatId: Recipient, messageId: Int, disableNotification: Boolean?): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             PinChatMessage(chatId, messageId, disableNotification)
         )
 
     override suspend fun unpinChatMessage(chatId: Recipient): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             UnpinChatMessage(chatId)
         )
 
     override suspend fun leaveChat(chatId: Recipient): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             LeaveChat(chatId)
         )
 
     override suspend fun getChat(chatId: Recipient): Chat =
-        api.makeRequest(
+        network.makeRequest(
             token,
             GetChat(chatId)
         )
 
     override suspend fun getChatAdministrators(chatId: Recipient): List<ChatMember> =
-        api.makeRequest(
+        network.makeRequest(
             token,
             GetChatAdministrators(chatId)
         )
 
     override suspend fun getChatMembersCount(chatId: Recipient): Int =
-        api.makeRequest(
+        network.makeRequest(
             token,
             GetChatMembersCount(chatId)
         )
 
     override suspend fun getChatMember(chatId: Recipient, userId: Int): ChatMember =
-        api.makeRequest(
+        network.makeRequest(
             token,
             GetChatMember(chatId, userId)
         )
 
     override suspend fun setChatStickerSet(chatId: Recipient, stickerSetName: String): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SetChatStickerSet(chatId, stickerSetName)
         )
 
     override suspend fun deleteChatStickerSet(chatId: Recipient): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             DeleteChatStickerSet(chatId)
         )
 
     override suspend fun answerCallbackQuery(callbackQueryId: String, text: String?, showAlert: Boolean?, url: String?): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             AnswerCallbackQuery(callbackQueryId, text, showAlert, url)
         )
@@ -476,9 +496,9 @@ class BotImpl(
         inlineMessageId: String,
         latitude: Float,
         longitude: Float,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             EditMessageLiveLocationInline(inlineMessageId, latitude, longitude, replyMarkup)
         )
@@ -488,9 +508,9 @@ class BotImpl(
         messageId: Int,
         latitude: Float,
         longitude: Float,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             EditMessageLiveLocation(chatId, messageId, latitude, longitude, replyMarkup)
         )
@@ -500,9 +520,9 @@ class BotImpl(
         text: String,
         parseMode: ParseMode?,
         disableWebPagePreview: Boolean?,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             EditMessageTextInline(inlineMessageId, text, parseMode, disableWebPagePreview, replyMarkup)
         )
@@ -514,9 +534,9 @@ class BotImpl(
         text: String,
         parseMode: ParseMode?,
         disableWebPagePreview: Boolean?,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             EditMessageText(chatId, messageId, text, parseMode, disableWebPagePreview, replyMarkup)
         )
@@ -526,9 +546,9 @@ class BotImpl(
         inlineMessageId: String,
         caption: String?,
         parseMode: ParseMode?,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             EditMessageCaptionInline(inlineMessageId, caption, parseMode, replyMarkup)
         )
@@ -538,16 +558,16 @@ class BotImpl(
         messageId: Int,
         caption: String?,
         parseMode: ParseMode?,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             EditMessageCaption(chatId, messageId, caption, parseMode, replyMarkup)
         )
 
 
-    override suspend fun editMessageMedia(inlineMessageId: String, media: InputMedia, replyMarkup: InlineKeyboardMarkup?): Unit =
-        api.makeRequest(
+    override suspend fun editMessageMedia(inlineMessageId: String, media: InputMedia, replyMarkup: ReplyMarkup?): Unit =
+        network.makeRequest(
             token,
             EditMessageMediaInline(inlineMessageId, media, replyMarkup)
         )
@@ -556,37 +576,53 @@ class BotImpl(
         chatId: Recipient,
         messageId: Int,
         media: InputMedia,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             EditMessageMedia(chatId, messageId, media, replyMarkup)
         )
 
 
-    override suspend fun editMessageReplyMarkup(inlineMessageId: String, replyMarkup: InlineKeyboardMarkup?): Unit =
-        api.makeRequest(
+    override suspend fun editMessageReplyMarkup(inlineMessageId: String, replyMarkup: ReplyMarkup?): Unit =
+        network.makeRequest(
             token,
             EditMessageReplyMarkupInline(inlineMessageId, replyMarkup)
         )
 
-    override suspend fun editMessageReplyMarkup(chatId: Recipient, messageId: Int, replyMarkup: InlineKeyboardMarkup?): Message =
-        api.makeRequest(
+    override suspend fun editMessageReplyMarkup(chatId: Recipient, messageId: Int, replyMarkup: ReplyMarkup?): Message =
+        network.makeRequest(
             token,
             EditMessageReplyMarkup(chatId, messageId, replyMarkup)
         )
 
 
     override suspend fun stopMessageLiveLocation(inlineMessageId: String): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             StopMessageLiveLocationInline(inlineMessageId)
         )
 
     override suspend fun stopMessageLiveLocation(chatId: Recipient, messageId: Int): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             StopMessageLiveLocation(chatId, messageId)
+        )
+    //</editor-fold>
+
+    //<editor-fold desc="inline">
+    override suspend fun answerInlineQuery(
+        inlineQueryId: String,
+        results: List<InlineQueryResult>,
+        cacheTime: Int?,
+        isPersonal: Boolean?,
+        nextOffset: String?,
+        switchPmText: String?,
+        switchPmParameter: String?
+    ): Unit =
+        network.makeRequest(
+            token,
+            AnswerInlineQuery(inlineQueryId, results, cacheTime, isPersonal, nextOffset, switchPmText, switchPmParameter)
         )
     //</editor-fold>
 
@@ -614,9 +650,9 @@ class BotImpl(
         isFlexible: Boolean?,
         disableNotification: Boolean?,
         replyToMessageId: Int?,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendInvoice(
                 chatId,
@@ -651,13 +687,13 @@ class BotImpl(
         shippingOptions: List<ShippingOption>?,
         errorMessage: String?
     ): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             AnswerShippingQuery(shippingQueryId, ok, shippingOptions, errorMessage)
         )
 
     override suspend fun answerPreCheckoutQuery(preCheckoutQueryId: String, ok: Boolean, errorMessage: String?): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             AnswerPreCheckoutQuery(preCheckoutQueryId, ok, errorMessage)
         )
@@ -665,7 +701,7 @@ class BotImpl(
 
     //<editor-fold desc="tg-passport">
     override suspend fun setPassportDataErrors(userId: Int, errors: List<PassportElementError>): Unit =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SetPassportDataErrors(userId, errors)
         )
@@ -673,13 +709,13 @@ class BotImpl(
 
     //<editor-fold desc="polls">
     override suspend fun sendPoll(chatId: Recipient, question: String, options: List<String>, disableNotification: Boolean?, replyToMessageId: Int?, replyMarkup: ReplyMarkup?): Message =
-        api.makeRequest(
+        network.makeRequest(
             token,
             SendPoll(chatId, question, options, disableNotification, replyToMessageId, replyMarkup)
         )
 
-    override suspend fun stopPoll(chatId: Recipient, messageId: Int, replyMarkup: InlineKeyboardMarkup?): Poll =
-        api.makeRequest(
+    override suspend fun stopPoll(chatId: Recipient, messageId: Int, replyMarkup: ReplyMarkup?): Poll =
+        network.makeRequest(
             token,
             StopPoll(chatId, messageId, replyMarkup)
         )
@@ -687,12 +723,12 @@ class BotImpl(
 
     //</editor-fold>
 
+    //<editor-fold desc="close">
     override suspend fun close() {
-        cancelScope()
-        api.close()
+        network.close()
+        job.complete()
+        me.cancel()
+        job.join()
     }
-
-    private fun cancelScope() {
-        cancel()
-    }
+    //</editor-fold>
 }

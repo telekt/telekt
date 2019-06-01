@@ -32,7 +32,7 @@ suspend fun main(args: Array<String>) {
     //                                                 ^^^^^^^^^^^^^^ note: default parse mode
     val dp = Dispatcher(bot)
 
-    dp.messageHandler(CommandFilter("html")) { (message: Message) ->
+    dp.messageHandler(CommandFilter("html")) { message: Message ->
         val text = html /* html 'DSL' for building html text for telegram */ {
             +"`+` adds the string to text, "
             +"note: `+` doesn't add \\n to text. You should add it explicitly, or use `nl()` function.\n" // <-- first \n
@@ -71,7 +71,7 @@ suspend fun main(args: Array<String>) {
         bot.sendMessage(Recipient(message.chat.id), text)
     }
 
-    dp.messageHandler(CommandFilter("markdown")) { (message: Message) ->
+    dp.messageHandler(CommandFilter("markdown")) { message: Message ->
         val text = markdown {
             +"Markdown works the same way as html, but makes Markdown text. "
             +bold("Understand?")
