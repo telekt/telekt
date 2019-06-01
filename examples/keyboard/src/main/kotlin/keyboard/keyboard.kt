@@ -8,7 +8,6 @@ import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.dispatcher.Dispatcher
 import rocks.waffle.telekt.types.replymarkup.KeyboardButton
 import rocks.waffle.telekt.types.replymarkup.ReplyKeyboardRemove
-import rocks.waffle.telekt.util.Recipient
 import rocks.waffle.telekt.util.ReplyKeyboardMarkup
 import rocks.waffle.telekt.util.handlerregistration.command
 import rocks.waffle.telekt.util.handlerregistration.dispatch
@@ -62,11 +61,6 @@ suspend fun main(args: Array<String>) {
             }
         }
     }
-
-    bot.sendMessage(
-        Recipient(218485655),
-        "text"
-    )
 
     dp.poll()
 }

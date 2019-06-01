@@ -1,5 +1,5 @@
 group = "rocks.waffle.telekt.examples.keyboard"
-version = "0.1.2"
+version = "0.1.3"
 
 plugins { application }
 
