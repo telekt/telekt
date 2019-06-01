@@ -54,8 +54,10 @@ suspend fun main(args: Array<String>) {
                 fsmContext.next()
 
                 val markup = ReplyKeyboardMarkup(
-                    arrayOf(KeyboardButton("Male"), KeyboardButton("Female")),
-                    arrayOf(KeyboardButton("Other"))
+                    listOf(
+                        listOf(KeyboardButton("Male"), KeyboardButton("Female")),
+                        listOf(KeyboardButton("Other"))
+                    )
                 )
 
                 bot.replyTo(message, "What is your gender?", replyMarkup = markup)
