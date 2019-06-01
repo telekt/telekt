@@ -2,6 +2,9 @@ package rocks.waffle.telekt.dispatcher
 
 import com.kizitonwose.time.seconds
 import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.features.XForwardedHeaderSupport
+import io.ktor.features.origin
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveText
 import io.ktor.response.respond
@@ -26,9 +29,14 @@ import rocks.waffle.telekt.fsm.DisabledStorage
 import rocks.waffle.telekt.fsm.FSMContext
 import rocks.waffle.telekt.types.*
 import rocks.waffle.telekt.types.enums.AllowedUpdate
+import rocks.waffle.telekt.util.ip.IpV4
+import rocks.waffle.telekt.util.ip.IpV4Mask
+import rocks.waffle.telekt.util.ip.checkIp
+import rocks.waffle.telekt.util.ip.ipV4Mask
 import java.util.concurrent.TimeUnit
 
 
+@kotlin.ExperimentalUnsignedTypes
 class KtorDispatcher(
     val bot: Bot,
     private val storage: BaseStorage = DisabledStorage,
@@ -37,9 +45,21 @@ class KtorDispatcher(
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.Default + job)
 
-    data class WebhookConfig(val server: ApplicationEngineFactory<*, *> = Netty)
-
     private val logger = KotlinLogging.logger {}
+
+    data class WebhookConfig(
+        val server: ApplicationEngineFactory<*, *> = Netty,
+        /**
+         * Networks witch are allowed to trigger webhook.
+         *
+         * Pass empty list to allow any IP (not recommended).
+         */
+        val allowedIp: List<Pair<IpV4, IpV4Mask>> = listOf(
+            // Networks from telegram docs (last check: May 31, 2019)
+            IpV4(149u, 154u, 160u, 0u) to ipV4Mask(20),
+            IpV4(91u, 108u, 4u, 0u) to ipV4Mask(22)
+        )
+    )
 
     //<editor-fold desc="handlers">
     private val messageHandlers: Handlers<Message> = Handlers()
@@ -130,6 +150,7 @@ class KtorDispatcher(
         logger.info("Skipped all updates")
     }
 
+    //<editor-fold desc="process updates">
     override suspend fun processUpdates(updates: List<Update>) = coroutineScope {
         for (update in updates) launch { processUpdate(update) }
     }
@@ -158,6 +179,7 @@ class KtorDispatcher(
             }
         }
     }
+    //</editor-fold>
 
     //<editor-fold desc="long polling">
     @kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -400,12 +422,30 @@ class KtorDispatcher(
 
         private fun getServer(port: Int, host: String, path: String, json: Json): ApplicationEngine =
             embeddedServer(webhookConfig.server, port = port, host = host) {
+                install(XForwardedHeaderSupport)
+
                 routing {
                     post(path) {
-                        val text = call.receiveText()
-                        val update = json.parse(Update.serializer(), text)
-                        scope.launch { processUpdate(update) }
-                        call.respond(HttpStatusCode.OK, "OK")
+                        val allow = IpV4.parse(call.request.origin.remoteHost)?.let {
+                            webhookConfig.allowedIp.isEmpty() || webhookConfig.allowedIp.map { (net, mask) ->
+                                checkIp(addr = it, net = net, mask = mask)
+                            }.any { a -> a }
+                        }
+
+                        if (allow == true) {
+                            val text = call.receiveText()
+                            val update = json.parse(Update.serializer(), text)
+                            scope.launch { processUpdate(update) }
+                            call.respond(HttpStatusCode.OK, "OK")
+                        } else {
+                            logger.warn {
+                                "Detected webhook request from disallowed IP (${call.request.origin.remoteHost}). " +
+                                        "Probably someone found out endpoint of your http proxy, that redirects requests to bot. " +
+                                        "Consider changing server endpoint. " +
+                                        "Or consider setting up `X-Forwarded-For` header or adding this ip to `KtorDispatcher.WebhookConfig.allowedIp` if this is IP of your HTTP proxy."
+                            }
+                            call.respond(HttpStatusCode.Unauthorized, "Unauthorized")
+                        }
                     }
                 }
             }

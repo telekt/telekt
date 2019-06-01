@@ -34,7 +34,7 @@ Install to your project:
 
 * Using Gradle.kts:
 ```kotlin
-implementation("rocks.waffle.telekt:telekt:0.2.0")
+implementation("rocks.waffle.telekt:telekt:0.6.7")
 ```
 Also this project uses [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization), so you need to add kotlinx repository: 
 ```kotlin
