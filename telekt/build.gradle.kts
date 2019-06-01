@@ -1,5 +1,5 @@
 group = "rocks.waffle.telekt"
-version = "0.6.2-SNAPSHOT"
+version = "0.6.3-SNAPSHOT"
 
 val kotlinVersion = "1.3.30"
 val ktorVersion = "1.2.0"
@@ -61,6 +61,9 @@ dependencies {
 
     // reflection (for exceptions)
     implementation("org.reflections:reflections:0.9.11")
+
+    implementation("io.rdbc:rdbc-api-scala_2.12:0.0.82")
+    implementation("io.rdbc.pgsql:pgsql-transport-netty_2.12:0.4.0.1")
 }
 
 tasks.register<Jar>("sourcesJar") {

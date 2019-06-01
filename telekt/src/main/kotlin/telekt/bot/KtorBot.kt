@@ -604,6 +604,22 @@ class KtorBot(
         )
     //</editor-fold>
 
+    //<editor-fold desc="inline">
+    override suspend fun answerInlineQuery(
+        inlineQueryId: String,
+        results: List<InlineQueryResult>,
+        cacheTime: Int?,
+        isPersonal: Boolean?,
+        nextOffset: String?,
+        switchPmText: String?,
+        switchPmParameter: String?
+    ): Unit =
+        network.makeRequest(
+            token,
+            AnswerInlineQuery(inlineQueryId, results, cacheTime, isPersonal, nextOffset, switchPmText, switchPmParameter)
+        )
+    //</editor-fold>
+
     //<editor-fold desc="payments">
     override suspend fun sendInvoice(
         chatId: Recipient,
