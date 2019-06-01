@@ -1,6 +1,9 @@
 package rocks.waffle.telekt.network.requests.auto
 
-import kotlinx.serialization.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import rocks.waffle.telekt.network.InputFile
@@ -9,8 +12,8 @@ import rocks.waffle.telekt.network.TelegramMethod
 import rocks.waffle.telekt.network.requests.abstracts.MultipartRequest
 import rocks.waffle.telekt.network.requests.abstracts.asMediaMap
 import rocks.waffle.telekt.types.Message
-import rocks.waffle.telekt.types.ReplyMarkup
 import rocks.waffle.telekt.types.enums.ParseMode
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 import rocks.waffle.telekt.util.Recipient
 
 

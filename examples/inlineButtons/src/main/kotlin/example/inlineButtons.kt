@@ -4,6 +4,7 @@ import com.github.ajalt.clikt.core.NoRunCliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.dispatcher.Dispatcher
+import rocks.waffle.telekt.types.replymarkup.InlineKeyboardButton
 import rocks.waffle.telekt.util.InlineKeyboardMarkup
 import rocks.waffle.telekt.util.answerOn
 import rocks.waffle.telekt.util.handlerregistration.*
@@ -25,13 +26,13 @@ suspend fun main(args: Array<String>) {
             handle {
                 val murkup = InlineKeyboardMarkup {
                     // buttons with callbackData will send callback query update to bot
-                    +button("none", callbackData = "none")
-                    +button("text", callbackData = "text")
-                    +button("alert", callbackData = "alert")
-                    +button("url-call", callbackData = "url")
+                    +InlineKeyboardButton.CallbackData("none", "none")
+                    +InlineKeyboardButton.CallbackData("text", "text")
+                    +InlineKeyboardButton.CallbackData("alert", "alert")
+                    +InlineKeyboardButton.CallbackData("url-call", "url")
 
                     // buttons with url will just redirect user to passed url
-                    +button("url", url = "https://example.com")
+                    +InlineKeyboardButton.Url("url", url = "https://example.com")
                 }
 
                 bot.replyTo(it, "inline keyboard:", replyMarkup = murkup)

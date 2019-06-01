@@ -1,8 +1,7 @@
 package rocks.waffle.telekt.util
 
-import rocks.waffle.telekt.types.CallbackGame
-import rocks.waffle.telekt.types.InlineKeyboardButton
-import rocks.waffle.telekt.types.InlineKeyboardMarkup
+import rocks.waffle.telekt.types.replymarkup.InlineKeyboardButton
+import rocks.waffle.telekt.types.replymarkup.InlineKeyboardMarkup
 
 
 /**
@@ -48,23 +47,4 @@ class InlineKeyboardMarkupBuilder(val lineWidth: Int = 4) {
     fun build() = InlineKeyboardMarkup(*keyboard.map { it.toTypedArray() }.toTypedArray())
 
     operator fun InlineKeyboardButton.unaryPlus() = insert(this)
-
-    /** Alias for [InlineKeyboardButton] */
-    fun button(
-        text: String,
-        url: String? = null,
-        callbackData: String? = null,
-        switchInlineQuery: String? = null,
-        switchInlineQueryCurrentChat: String? = null,
-        callbackGame: CallbackGame? = null,
-        pay: Boolean? = null
-    ) = InlineKeyboardButton(
-        text,
-        url = url,
-        callbackData = callbackData,
-        switchInlineQuery = switchInlineQuery,
-        switchInlineQueryCurrentChat = switchInlineQueryCurrentChat,
-        callbackGame = callbackGame,
-        pay = pay
-    )
 }

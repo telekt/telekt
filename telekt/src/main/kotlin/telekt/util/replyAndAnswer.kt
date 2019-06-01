@@ -2,8 +2,8 @@ package rocks.waffle.telekt.util
 
 import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.types.Message
-import rocks.waffle.telekt.types.ReplyMarkup
 import rocks.waffle.telekt.types.enums.ParseMode
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 
 suspend fun Bot.replyTo(
     message: Message,

@@ -2,6 +2,7 @@ package rocks.waffle.telekt.types
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 
 // `@Serializable`? (Will it work? Polimorphic serializer?...)
 sealed class InlineQueryResult
@@ -18,7 +19,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
     @SerialName("voice_duration") val voiceDuration: Int? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult()
 
@@ -37,7 +38,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     @SerialName("video_height") val videoHeight: Int? = null,
     @SerialName("video_duration") val videoDuration: Int? = null,
     val description: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult()
 
@@ -52,7 +53,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val address: String,
     @SerialName("foursquare_id") val foursquareId: String? = null,
     @SerialName("foursquare_type") val foursquareType: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null,
     @SerialName("thumb_url") val thumbUrl: String? = null,
     @SerialName("thumb_width") val thumbWidth: Int? = null,
@@ -72,7 +73,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val description: String? = null,
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult()
 
@@ -89,7 +90,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val title: String? = null,
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult()
 
@@ -102,7 +103,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val longitude: Float,
     val title: String,
     @SerialName("live_period") val livePeriod: Int? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null,
     @SerialName("thumb_url") val thumbUrl: String? = null,
     @SerialName("thumb_width") val thumbWidth: Int? = null,
@@ -122,7 +123,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val title: String? = null,
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult()
 
@@ -137,7 +138,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     @SerialName("document_url") val documentUrl: String,
     @SerialName("mime_type") val mimeType: String,
     val description: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null,
     @SerialName("thumb_url") val thumbUrl: String? = null,
     @SerialName("thumb_width") val thumbWidth: Int? = null,
@@ -150,7 +151,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val type: String,
     val id: String,
     @SerialName("game_short_name") val gameShortName: String,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : InlineQueryResult()
 
 
@@ -162,7 +163,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     @SerialName("first_name") val firstName: String,
     @SerialName("last_name") val lastName: String? = null,
     val vcard: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null,
     @SerialName("thumb_url") val thumbUrl: String? = null,
     @SerialName("thumb_width") val thumbWidth: Int? = null,
@@ -180,7 +181,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     @SerialName("parse_mode") val parseMode: String? = null,
     val performer: String? = null,
     @SerialName("audio_duration") val audioDuration: Int? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResult()
 
@@ -191,7 +192,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val id: String,
     val title: String,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     val url: String? = null,
     @SerialName("hide_url") val hideUrl: Boolean? = null,
     val description: String? = null,
@@ -211,7 +212,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val description: String? = null,
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResultCached()
 
@@ -221,7 +222,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val type: String,
     val id: String,
     @SerialName("sticker_file_id") val stickerFileId: String,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResultCached()
 
@@ -235,7 +236,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val description: String? = null,
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResultCached()
 
@@ -248,7 +249,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val title: String? = null,
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResultCached()
 
@@ -261,7 +262,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val title: String? = null,
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResultCached()
 
@@ -275,7 +276,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val description: String? = null,
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResultCached()
 
@@ -287,7 +288,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     @SerialName("audio_file_id") val audioFileId: String,
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResultCached()
 
@@ -300,7 +301,7 @@ sealed class InlineQueryResultCached : InlineQueryResult()
     val title: String,
     val caption: String? = null,
     @SerialName("parse_mode") val parseMode: String? = null,
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null,
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null,
     @SerialName("input_message_content") val inputMessageContent: InputMessageContent? = null
 ) : InlineQueryResultCached()
 //</editor-fold>

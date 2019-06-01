@@ -15,6 +15,7 @@ import rocks.waffle.telekt.types.*
 import rocks.waffle.telekt.types.enums.AllowedUpdate
 import rocks.waffle.telekt.types.enums.ParseMode
 import rocks.waffle.telekt.types.passport.PassportElementError
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 import rocks.waffle.telekt.util.Recipient
 import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
@@ -489,7 +490,7 @@ class KtorBot(
         inlineMessageId: String,
         latitude: Float,
         longitude: Float,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Unit =
         network.makeRequest(
             token,
@@ -501,7 +502,7 @@ class KtorBot(
         messageId: Int,
         latitude: Float,
         longitude: Float,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Message =
         network.makeRequest(
             token,
@@ -513,7 +514,7 @@ class KtorBot(
         text: String,
         parseMode: ParseMode?,
         disableWebPagePreview: Boolean?,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Unit =
         network.makeRequest(
             token,
@@ -527,7 +528,7 @@ class KtorBot(
         text: String,
         parseMode: ParseMode?,
         disableWebPagePreview: Boolean?,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Message =
         network.makeRequest(
             token,
@@ -539,7 +540,7 @@ class KtorBot(
         inlineMessageId: String,
         caption: String?,
         parseMode: ParseMode?,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Unit =
         network.makeRequest(
             token,
@@ -551,7 +552,7 @@ class KtorBot(
         messageId: Int,
         caption: String?,
         parseMode: ParseMode?,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Message =
         network.makeRequest(
             token,
@@ -559,7 +560,7 @@ class KtorBot(
         )
 
 
-    override suspend fun editMessageMedia(inlineMessageId: String, media: InputMedia, replyMarkup: InlineKeyboardMarkup?): Unit =
+    override suspend fun editMessageMedia(inlineMessageId: String, media: InputMedia, replyMarkup: ReplyMarkup?): Unit =
         network.makeRequest(
             token,
             EditMessageMediaInline(inlineMessageId, media, replyMarkup)
@@ -569,7 +570,7 @@ class KtorBot(
         chatId: Recipient,
         messageId: Int,
         media: InputMedia,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Message =
         network.makeRequest(
             token,
@@ -577,13 +578,13 @@ class KtorBot(
         )
 
 
-    override suspend fun editMessageReplyMarkup(inlineMessageId: String, replyMarkup: InlineKeyboardMarkup?): Unit =
+    override suspend fun editMessageReplyMarkup(inlineMessageId: String, replyMarkup: ReplyMarkup?): Unit =
         network.makeRequest(
             token,
             EditMessageReplyMarkupInline(inlineMessageId, replyMarkup)
         )
 
-    override suspend fun editMessageReplyMarkup(chatId: Recipient, messageId: Int, replyMarkup: InlineKeyboardMarkup?): Message =
+    override suspend fun editMessageReplyMarkup(chatId: Recipient, messageId: Int, replyMarkup: ReplyMarkup?): Message =
         network.makeRequest(
             token,
             EditMessageReplyMarkup(chatId, messageId, replyMarkup)
@@ -627,7 +628,7 @@ class KtorBot(
         isFlexible: Boolean?,
         disableNotification: Boolean?,
         replyToMessageId: Int?,
-        replyMarkup: InlineKeyboardMarkup?
+        replyMarkup: ReplyMarkup?
     ): Message =
         network.makeRequest(
             token,
@@ -691,7 +692,7 @@ class KtorBot(
             SendPoll(chatId, question, options, disableNotification, replyToMessageId, replyMarkup)
         )
 
-    override suspend fun stopPoll(chatId: Recipient, messageId: Int, replyMarkup: InlineKeyboardMarkup?): Poll =
+    override suspend fun stopPoll(chatId: Recipient, messageId: Int, replyMarkup: ReplyMarkup?): Poll =
         network.makeRequest(
             token,
             StopPoll(chatId, messageId, replyMarkup)

@@ -1,4 +1,4 @@
-package rocks.waffle.telekt.types
+package rocks.waffle.telekt.types.replymarkup
 
 import kotlinx.serialization.*
 
@@ -18,8 +18,9 @@ import kotlinx.serialization.*
 }
 
 /** This object represents an inline keyboard that appears right next to the message it belongs to. */
-@Serializable /* no data cause of vararg */ class InlineKeyboardMarkup(@SerialName("inline_keyboard") vararg val inlineKeyboard: Array<InlineKeyboardButton>) :
-    ReplyMarkup()
+@Serializable /* no data cause of vararg */ class InlineKeyboardMarkup(
+    @SerialName("inline_keyboard") vararg val inlineKeyboard: Array<InlineKeyboardButton>
+) : ReplyMarkup()
 
 /**
  * Upon receiving a message with this object, Telegram clients will remove the current custom keyboard and display the default letter-keyboard.

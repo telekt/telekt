@@ -5,10 +5,10 @@ import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.contrib.storages.ActorMemoryStorage
 import rocks.waffle.telekt.dispatcher.Dispatcher
 import rocks.waffle.telekt.fsm.next
-import rocks.waffle.telekt.types.KeyboardButton
-import rocks.waffle.telekt.types.ReplyKeyboardMarkup
-import rocks.waffle.telekt.types.ReplyKeyboardRemove
 import rocks.waffle.telekt.types.enums.ParseMode
+import rocks.waffle.telekt.types.replymarkup.KeyboardButton
+import rocks.waffle.telekt.types.replymarkup.ReplyKeyboardMarkup
+import rocks.waffle.telekt.types.replymarkup.ReplyKeyboardRemove
 import rocks.waffle.telekt.util.answerOn
 import rocks.waffle.telekt.util.handlerregistration.*
 import rocks.waffle.telekt.util.markdown.html

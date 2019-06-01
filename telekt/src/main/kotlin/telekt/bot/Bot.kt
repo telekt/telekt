@@ -11,6 +11,7 @@ import rocks.waffle.telekt.types.*
 import rocks.waffle.telekt.types.enums.AllowedUpdate
 import rocks.waffle.telekt.types.enums.ParseMode
 import rocks.waffle.telekt.types.passport.PassportElementError
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 import rocks.waffle.telekt.util.Recipient
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -756,7 +757,7 @@ interface Bot {
         inlineMessageId: String,
         latitude: Float,
         longitude: Float,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Unit
 
 
@@ -779,7 +780,7 @@ interface Bot {
         messageId: Int,
         latitude: Float,
         longitude: Float,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
     /**
@@ -798,7 +799,7 @@ interface Bot {
         text: String,
         parseMode: ParseMode? = null,
         disableWebPagePreview: Boolean? = null,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Unit
 
 
@@ -821,7 +822,7 @@ interface Bot {
         text: String,
         parseMode: ParseMode? = null,
         disableWebPagePreview: Boolean? = null,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
 
@@ -839,7 +840,7 @@ interface Bot {
         inlineMessageId: String,
         caption: String? = null,
         parseMode: ParseMode? = null,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Unit
 
     /**
@@ -859,7 +860,7 @@ interface Bot {
         messageId: Int,
         caption: String? = null,
         parseMode: ParseMode? = null,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
 
@@ -879,7 +880,7 @@ interface Bot {
     suspend fun editMessageMedia(
         inlineMessageId: String,
         media: InputMedia,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Unit
 
     /**
@@ -899,7 +900,7 @@ interface Bot {
         chatId: Recipient,
         messageId: Int,
         media: InputMedia,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
 
@@ -913,7 +914,7 @@ interface Bot {
      */
     suspend fun editMessageReplyMarkup(
         inlineMessageId: String,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Unit
 
     /**
@@ -929,7 +930,7 @@ interface Bot {
     suspend fun editMessageReplyMarkup(
         chatId: Recipient,
         messageId: Int,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
 
@@ -1013,7 +1014,7 @@ interface Bot {
         isFlexible: Boolean? = null,
         disableNotification: Boolean? = null,
         replyToMessageId: Int? = null,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Message
 
     /**
@@ -1101,7 +1102,7 @@ interface Bot {
     suspend fun stopPoll(
         chatId: Recipient,
         messageId: Int,
-        replyMarkup: InlineKeyboardMarkup? = null
+        replyMarkup: ReplyMarkup? = null
     ): Poll
     //</editor-fold>
 

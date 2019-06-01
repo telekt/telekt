@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import rocks.waffle.telekt.network.TelegramMethod
 import rocks.waffle.telekt.network.requests.abstracts.SimpleRequest
-import rocks.waffle.telekt.types.InlineKeyboardMarkup
 import rocks.waffle.telekt.types.LabeledPrice
 import rocks.waffle.telekt.types.Message
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 import rocks.waffle.telekt.util.Recipient
 
 
@@ -64,7 +64,7 @@ import rocks.waffle.telekt.util.Recipient
     /** If the message is a reply, ID of the original message */
     @SerialName("reply_to_message_id") val replyToMessageId: Int? = null,
     /** A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button. */
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : SimpleRequest<Message>() {
     @Transient override val method = TelegramMethod.sendInvoice
     @Transient override val resultDeserializer: KSerializer<out Message> = Message.serializer()

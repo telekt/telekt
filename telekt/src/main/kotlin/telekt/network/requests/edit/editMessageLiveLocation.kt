@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import rocks.waffle.telekt.network.TelegramMethod
 import rocks.waffle.telekt.network.requests.abstracts.SimpleRequest
-import rocks.waffle.telekt.types.InlineKeyboardMarkup
 import rocks.waffle.telekt.types.Message
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 import rocks.waffle.telekt.util.Recipient
 import rocks.waffle.telekt.util.serializer
 
@@ -27,7 +27,7 @@ import rocks.waffle.telekt.util.serializer
     /** Longitude of new location */
     val longitude: Float,
     /** A JSON-serialized object for a new inline keyboard. */
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : SimpleRequest<Unit>() {
     @Transient override val method = TelegramMethod.editMessageLiveLocation
     @Transient override val resultDeserializer: KSerializer<out Unit> = Unit.serializer()
@@ -53,7 +53,7 @@ import rocks.waffle.telekt.util.serializer
     /** Longitude of new location */
     val longitude: Float,
     /** A JSON-serialized object for a new inline keyboard. */
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : SimpleRequest<Message>() {
     @Transient override val method = TelegramMethod.editMessageLiveLocation
     @Transient override val resultDeserializer: KSerializer<out Message> = Message.serializer()

@@ -6,7 +6,8 @@ package rocks.waffle.telekt.examples.keyboard
 
 import rocks.waffle.telekt.bot.Bot
 import rocks.waffle.telekt.dispatcher.Dispatcher
-import rocks.waffle.telekt.types.ReplyKeyboardRemove
+import rocks.waffle.telekt.types.replymarkup.KeyboardButton
+import rocks.waffle.telekt.types.replymarkup.ReplyKeyboardRemove
 import rocks.waffle.telekt.util.Recipient
 import rocks.waffle.telekt.util.ReplyKeyboardMarkup
 import rocks.waffle.telekt.util.handlerregistration.command
@@ -31,7 +32,7 @@ suspend fun main(args: Array<String>) {
                  * the user can press a special button in the input field to see the custom keyboard again. Defaults to false.
                  */
                 val markup = ReplyKeyboardMarkup(oneTimeKeyboard = true) {
-                    add(button("test"), button("text"))
+                    add(KeyboardButton("test"), KeyboardButton("text"))
                 }
                 bot.replyTo(it, "You can use this keyboard only once", replyMarkup = markup)
             }
@@ -43,7 +44,7 @@ suspend fun main(args: Array<String>) {
                  * Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard.
                  */
                 val markup = ReplyKeyboardMarkup(resizeKeyboard = true) {
-                    add(button("test"), button("text"))
+                    add(KeyboardButton("test"), KeyboardButton("text"))
                 }
                 bot.replyTo(it, "This keyboard will be resized vertically for optimal fit", replyMarkup = markup)
             }

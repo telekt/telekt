@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import rocks.waffle.telekt.network.TelegramMethod
 import rocks.waffle.telekt.network.requests.abstracts.SimpleRequest
-import rocks.waffle.telekt.types.InlineKeyboardMarkup
 import rocks.waffle.telekt.types.Message
 import rocks.waffle.telekt.types.enums.ParseMode
+import rocks.waffle.telekt.types.replymarkup.ReplyMarkup
 import rocks.waffle.telekt.util.Recipient
 import rocks.waffle.telekt.util.serializer
 
@@ -26,7 +26,7 @@ import rocks.waffle.telekt.util.serializer
     /** Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption. */
     @SerialName("parse_mode") val parseMode: ParseMode? = null,
     /** A JSON-serialized object for an inline keyboard. */
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : SimpleRequest<Unit>() {
     @Transient override val method = TelegramMethod.editMessageCaption
     @Transient override val resultDeserializer: KSerializer<out Unit> = Unit.serializer()
@@ -49,7 +49,7 @@ import rocks.waffle.telekt.util.serializer
     /** Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption. */
     @SerialName("parse_mode") val parseMode: ParseMode? = null,
     /** A JSON-serialized object for an inline keyboard. */
-    @SerialName("reply_markup") val replyMarkup: InlineKeyboardMarkup? = null
+    @SerialName("reply_markup") val replyMarkup: ReplyMarkup? = null
 ) : SimpleRequest<Message>() {
     @Transient override val method = TelegramMethod.editMessageCaption
     @Transient override val resultDeserializer: KSerializer<out Message> = Message.serializer()
