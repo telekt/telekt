@@ -51,6 +51,12 @@ class KtorBot(
             timeout = timeout?.let { (it * 1000 + requestTimeout_ / 2) }
         )
 
+    override suspend fun setWebhook(url: String, certificate: InputFile?, maxConnections: Int?, allowedUpdates: List<AllowedUpdate>?): Unit =
+        network.makeRequest(
+            token,
+            SetWebhook(url, certificate, maxConnections, allowedUpdates)
+        )
+
     override suspend fun deleteMessage(chatId: Recipient, messageId: Int) =
         network.makeRequest(
             token,
